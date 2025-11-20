@@ -1,234 +1,133 @@
-// app/[category]/[slugAndId]/page.tsx
-
-import Image from 'next/image';
-import parse from 'html-react-parser';
-import { parseISO, format } from 'date-fns';
-import { hi } from 'date-fns/locale';
-import { notFound } from 'next/navigation';
+// app/[category]/page.tsx
 import Link from 'next/link';
-import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import Image from 'next/image';
 
 const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
-const BASE_URL = 'https://www.khabar24live.com'; // IMPORTANT: Replace with your actual domain
+const BASE_URL = 'https://www.khabar24live.com';
 
-// --- UTILITY FUNCTIONS & COMPONENTS ---
+// --- 1. DEFINING TYPESCRIPT INTERFACES ---
 
-// Utility function to extract only the slug from the URL segment
-const extractSlug = (slugAndId: string) => {
-    // The pattern is "article-title-53175" -> we want "article-title"
-    const parts = slugAndId.split('-');
-    // Remove the last part (the ID)
-    return parts.slice(0, -1).join('-'); 
-};
-
-async function getPost(slug: string) {
-  try {
-    // Search by slug and embed details
-    const res = await fetch(`${API_URL}/posts?_embed&slug=${slug}`, {
-      next: { revalidate: 1800 }, // Revalidate every 30 mins
-    });
-
-    if (!res.ok) { return null; }
-
-    const posts = await res.json();
-    return posts.length > 0 ? posts[0] : null;
-
-  } catch (error) {
-    console.error('Error fetching single post:', error);
-    return null;
-  }
+/**
+ * Interface representing the basic structure of a WordPress Post object.
+ * We include the fields necessary for display and linking.
+ * You should expand this based on what 'ArticleCard' actually uses.
+ */
+interface Post {
+    id: number;
+    slug: string; // Add slug for linking
+    date: string;
+    title: { rendered: string };
+    excerpt: { rendered: string };
+    _embedded?: {
+        'wp:featuredmedia'?: [{ source_url: string; alt_text: string }];
+        author?: [{ name: string }];
+    };
 }
 
 /**
- * Renders the JSON-LD Script for NewsArticle Structured Data.
- * This is crucial for Google News, Top Stories, and Rich Snippets.
+ * MOCK: A minimal ArticleCard component for demonstration.
+ * In your real app, this would be imported from a separate file.
  */
-function ArticleJsonLd({ post, authorName, imageUrl, articlePath }: any) {
-    const ldData = {
-        '@context': 'https://schema.org',
-        '@type': 'NewsArticle',
-        'mainEntityOfPage': {
-            '@type': 'WebPage',
-            '@id': articlePath,
-        },
-        'headline': post.title.rendered.replace(/<[^>]*>?/gm, ''),
-        'image': [
-            imageUrl,
-            // Add other image sizes here if available and required by Google
-        ],
-        'datePublished': post.date,
-        'dateModified': post.modified_gmt || post.date,
-        'author': {
-            '@type': 'Person',
-            'name': authorName,
-        },
-        'publisher': {
-            '@type': 'Organization',
-            'name': 'Khabar24Live', // Your Organization Name
-            'logo': {
-                '@type': 'ImageObject',
-                // Logo must be valid for Rich Results (112x112 px minimum)
-                'url': `${BASE_URL}/logo-112x112.png`, 
-            },
-        },
-        'description': post.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 200),
-    };
+const ArticleCard: React.FC<{ post: Post; categorySlug: string }> = ({ post, categorySlug }) => {
+    const title = post.title.rendered.replace(/<[^>]*>?/gm, '');
+    const excerpt = post.excerpt.rendered.replace(/<[^>]*>?/gm, '');
+    const imageUrl = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || '/placeholder.jpg';
+    const postPath = `/${categorySlug}/${post.slug}-${post.id}`;
 
     return (
-        <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(ldData) }}
-        />
+        <Link href={postPath} className="block p-4 sm:p-6 bg-gray-50 hover:bg-gray-100 rounded-xl transition shadow-md border border-gray-200">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                <div className="flex-shrink-0 w-full sm:w-48 h-32 relative">
+                    <Image
+                        src={imageUrl}
+                        alt={title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, 33vw"
+                        style={{ objectFit: 'cover' }}
+                        className="rounded-lg"
+                        unoptimized
+                    />
+                </div>
+                <div className="flex-1">
+                    <h2 className="text-xl font-bold text-gray-900 line-clamp-2">{title}</h2>
+                    <p className="text-sm text-gray-600 mt-2 line-clamp-3" dangerouslySetInnerHTML={{ __html: excerpt }} />
+                    <span className="text-xs text-red-600 font-semibold mt-3 block">Read More &rarr;</span>
+                </div>
+            </div>
+        </Link>
     );
-}
+};
 
-// === METADATA & SEO GENERATION ===
 
-export async function generateMetadata({ params }: { params: { slugAndId: string } }): Promise<Metadata> {
-  const postSlug = extractSlug(params.slugAndId);
-  const post = await getPost(postSlug);
-  
-  if (!post) {
-    return { title: 'Not Found' };
+// --- DATA FETCHING ---
+
+/**
+ * Fetches posts for a given category slug.
+ * IMPORTANT: It should return Post[] type.
+ */
+async function getPostsByCategory(categorySlug: string): Promise<Post[]> {
+  try {
+    // 1. Get the category ID first (assuming the slug needs to be mapped to an ID)
+    const catRes = await fetch(`${API_URL}/categories?slug=${categorySlug}`, {
+        next: { revalidate: 3600 } // Cache categories for 1 hour
+    });
+    const categories = await catRes.json();
+    if (categories.length === 0) return [];
+    const categoryId = categories[0].id;
+
+    // 2. Fetch posts by category ID
+    const postsRes = await fetch(`${API_URL}/posts?categories=${categoryId}&_embed&per_page=10`, {
+      next: { revalidate: 600 }, // Revalidate posts every 10 mins
+    });
+
+    if (!postsRes.ok) { return []; }
+
+    // Cast the response array to the defined Post[] interface
+    const posts: Post[] = await postsRes.json();
+    return posts;
+
+  } catch (error) {
+    console.error(`Error fetching posts for category ${categorySlug}:`, error);
+    return [];
   }
-
-  const articlePath = `${BASE_URL}/${params.slugAndId}`;
-  const ampPath = `${articlePath}/amp`;
-  const title = post.title.rendered.replace(/<[^>]*>?/gm, ''); // Clean title
-  const description = post.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...'; // Clean excerpt
-  const imageUrl = post._embedded['wp:featuredmedia']?.[0]?.source_url || '/placeholder.jpg';
-
-  return {
-    title: title,
-    description: description,
-  
-
-    // Open Graph / Social Media metadata (for Facebook, etc.)
-    openGraph: {
-      title: title,
-      description: description,
-      url: articlePath,
-      type: 'article',
-      images: [
-        {
-          url: imageUrl,
-          alt: title,
-        },
-      ],
-      publishedTime: post.date,
-      modifiedTime: post.modified_gmt || post.date,
-      siteName: 'Khabar24Live',
-    },
-    
-    // Twitter Card metadata
-    twitter: {
-        card: 'summary_large_image',
-        title: title,
-        description: description,
-        images: [imageUrl],
-        creator: post._embedded.author?.[0]?.name || '@Khabar24Live', // Replace with a valid Twitter handle if known
-    }
-  };
 }
 
+// --- MAIN PAGE COMPONENT ---
 
-// === MAIN COMPONENT ===
+export default async function CategoryPage({ params }: { params: { category: string } }) {
+  const categorySlug = params.category;
+  // Posts array is now correctly typed as Post[]
+  const posts = await getPostsByCategory(categorySlug);
 
-export default async function PostPage({ params }: { 
-    params: { category: string; slugAndId: string } 
-}) {
-  const postSlug = extractSlug(params.slugAndId);
-  const post = await getPost(postSlug);
-
-  if (!post) {
+  // Fallback to 404 if no posts or category is found
+  if (posts.length === 0) {
     notFound();
   }
 
-  // Extract needed data
-  const title = post.title.rendered;
-  const content = post.content.rendered;
-  const date = post.date;
-  const authorName = post._embedded.author?.[0]?.name || 'Khabar24Live Desk';
-  const authorAvatarUrl = post._embedded.author?.[0]?.avatar_urls?.[96] || '/default-avatar.png';
-  const featuredMedia = post._embedded['wp:featuredmedia']?.[0];
-  const imageUrl = featuredMedia?.source_url || '/placeholder-large.jpg';
-  const imageAlt = featuredMedia?.alt_text || title;
-  
-  const formattedDate = format(parseISO(date), 'dd MMMM yyyy, hh:mm a', { locale: hi });
-  const categoryName = params.category.charAt(0).toUpperCase() + params.category.slice(1).replace('-', ' ');
-  const articlePath = `${BASE_URL}/${params.category}/${params.slugAndId}`;
-
+  // Use the category name from the first fetched category data (assuming getPostsByCategory returns category name or we use the slug)
+  const displayCategoryName = categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1).replace('-', ' ');
 
   return (
-    <article className="bg-white p-6 rounded-lg shadow-lg">
+    <div className="max-w-6xl mx-auto p-4 sm:p-8">
       
-      {/* JSON-LD Structured Data Script */}
-      <ArticleJsonLd 
-        post={post} 
-        authorName={authorName} 
-        imageUrl={imageUrl} 
-        articlePath={articlePath}
-      />
-      
-      {/* Category Link */}
-      <Link href={`/${params.category}`} className="text-red-700 hover:underline text-sm font-semibold uppercase">
-        {categoryName}
-      </Link>
-      
-      {/* Hindi Headline */}
-      <h1 className="text-4xl font-extrabold mt-2 mb-4 text-gray-900">
-        {parse(title)}
+      {/* Category Heading */}
+      <h1 className="text-3xl sm:text-4xl font-extrabold text-red-700 mb-8 border-b-4 border-red-100 pb-3">
+        Latest News in {displayCategoryName}
       </h1>
-      
-      {/* Author and Date/Time Detail */}
-      <div className="flex items-center text-sm text-gray-500 mb-6 border-b pb-4">
-        <Image 
-            src={authorAvatarUrl} 
-            alt={authorName} 
-            width={32} 
-            height={32} 
-            className="rounded-full mr-3" 
-            unoptimized // Assuming WordPress avatars aren't optimized
-        />
-        <span>By **{authorName}** | Published: {formattedDate}</span>
-      </div>
 
-      {/* Featured Media Image */}
-      <div className="relative w-full aspect-video mb-6">
-        <Image 
-          src={imageUrl} 
-          alt={imageAlt} 
-          fill
-          sizes="100vw"
-          style={{ objectFit: 'cover' }} 
-          className="rounded-xl"
-          unoptimized={true} // Use true if not using Next.js Image Optimization features
-        />
-      </div>
-
-      {/* Article Summary (Excerpt) */}
-      {post.excerpt.rendered && (
-        <div className="text-lg font-semibold italic text-gray-700 mb-6 border-l-4 border-red-500 pl-4">
-            {parse(post.excerpt.rendered)}
-        </div>
-      )}
-
-      {/* Main Content */}
-      <div className="prose max-w-none text-lg leading-relaxed">
-        {/* Render HTML content safely */}
-        {parse(content)}
+      {/* Article List */}
+      <div className="space-y-6">
+        {/* FIX: The 'post' parameter is now explicitly typed as 'Post' via the 'posts' array type */}
+        {posts.map((post: Post) => (
+            // Reuse the ArticleCard component for consistent listing
+            <ArticleCard key={post.id} post={post} categorySlug={categorySlug} />
+        ))}
       </div>
       
-    </article>
+    </div>
   );
 }
 
-// Optional: Generate static paths for better performance (SSG)
-export async function generateStaticParams() {
-    // You would fetch a list of your top/recent post slugs here
-    return [
-        { category: 'entertainment', slugAndId: 'its-confirmed-korean-action-star-don-lee-joins-prabhas-triptii-dimri-spirit-directed-by-sandeep-reddy-vanga-53175' },
-    ];
-
-}
-
+// Optional: Metadata for the Category Page
+// You can add a generateMetadata function here similar to the one in page.tsx
