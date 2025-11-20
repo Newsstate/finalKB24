@@ -13,7 +13,7 @@ export default function robots(): MetadataRoute.Robots {
         // Allow access to the entire site
         allow: '/',
         // Disallow access to common non-public areas
-        disallow: ['/admin/', '/private/', '/amp/'],
+        disallow: ['/admin/', '/private/'],
       },
       // You can add specific rules for certain bots if needed (e.g., Googlebot)
     ],
