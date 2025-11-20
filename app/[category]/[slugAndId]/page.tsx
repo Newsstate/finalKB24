@@ -101,13 +101,7 @@ export async function generateMetadata({ params }: { params: { slugAndId: string
   return {
     title: title,
     description: description,
-    
-    // Canonical URL setup
-    alternates: {
-      canonical: articlePath,
-      // AMP Alternate Link
-     links: [{ rel: 'amphtml', url: ampPath }],
-    },
+  
 
     // Open Graph / Social Media metadata (for Facebook, etc.)
     openGraph: {
@@ -237,3 +231,4 @@ export async function generateStaticParams() {
     ];
 
 }
+
