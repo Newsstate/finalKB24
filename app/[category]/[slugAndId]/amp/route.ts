@@ -5,6 +5,7 @@ import type { NextRequest } from "next/server";
 const API_URL = "https://khabar24live.com/wp-json/wp/v2";
 const BASE_URL = "https://www.khabar24live.com";
 
+// Categories for navigation
 const categories = [
   { slug: 'entertainment', name: 'मनोरंजन' },
   { slug: 'latest', name: 'तजा खबर' },
@@ -27,11 +28,14 @@ const categories = [
   { slug: 'lifestyle', name: 'लाइफस्टाइल' },
 ];
 
+
+/** Extract slug from "title-12345" */
 function extractSlug(slugAndId: string) {
   const parts = slugAndId.split("-");
   return parts.slice(0, -1).join("-");
 }
 
+/** Fetch post by slug */
 async function fetchPostBySlug(slug: string) {
   const res = await fetch(`${API_URL}/posts?_embed&slug=${encodeURIComponent(slug)}`, {
     next: { revalidate: 300 },
@@ -41,13 +45,16 @@ async function fetchPostBySlug(slug: string) {
   return posts.length ? posts[0] : null;
 }
 
+/** Sanitize content for AMP */
 function transformContentToAmp(html: string) {
   if (!html) return "";
+
   html = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "");
   html = html.replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, "");
   html = html.replace(/\son\w+="[^"]*"/gi, "");
   html = html.replace(/\son\w+='[^']*'/gi, "");
   html = html.replace(/\son\w+=\S+/gi, "");
+
   html = html.replace(/<iframe[\s\S]*?<\/iframe>/gi, (m) => {
     const srcMatch = m.match(/src\s*=\s*"(.*?)"/i) || m.match(/src\s*=\s*'(.*?)'/i);
     const src = srcMatch ? srcMatch[1] : "";
@@ -65,11 +72,9 @@ function transformContentToAmp(html: string) {
 
     const widthMatch = attrs.match(/width\s*=\s*"(.*?)"/i) || attrs.match(/width\s*=\s*'(.*?)'/i);
     const heightMatch = attrs.match(/height\s*=\s*"(.*?)"/i) || attrs.match(/height\s*=\s*'(.*?)'/i);
+
     let width = widthMatch ? widthMatch[1] : "800";
     let height = heightMatch ? heightMatch[1] : "450";
-
-    if (!width || isNaN(Number(width))) width = "800";
-    if (!height || isNaN(Number(height))) height = "450";
 
     const finalSrc = src.startsWith("http") ? src : src.startsWith("/") ? `${BASE_URL}${src}` : src;
 
@@ -84,6 +89,7 @@ function escapeHtml(str: string) {
   return String(str || "").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
+/** GET handler */
 export async function GET(request: NextRequest, { params }: { params: { category: string; slugAndId: string } }) {
   try {
     const slugAndId = params.slugAndId;
@@ -103,17 +109,23 @@ export async function GET(request: NextRequest, { params }: { params: { category
     const imageAlt = featuredMedia?.alt_text || title;
 
     const canonical = `${BASE_URL}/${category}/${slugAndId}`;
+    const seoDescription = escapeHtml(post.yoast_head_json?.description || post.excerpt?.rendered || title);
 
-    // Horizontal scroll navigation
-    const navHtml = `<nav style="overflow-x:auto;white-space:nowrap;margin:16px 0;padding:4px 0;border-bottom:1px solid #eee;">
-      ${categories.map(cat => `<a href="${BASE_URL}/${cat.slug}" style="display:inline-block;margin-right:12px;text-decoration:none;color:#cc0000;font-weight:500">${cat.name}</a>`).join('')}
+    // AMP summary/excerpt
+    const summary = post.excerpt?.rendered ? `<p class="excerpt">${post.excerpt.rendered}</p>` : "";
+
+    // Build horizontal navigation
+    const navHtml = `<nav style="overflow-x:auto;white-space:nowrap;margin-bottom:16px;">
+      ${categories.map(c => `<a href="${BASE_URL}/${c.slug}" style="display:inline-block;margin-right:12px;color:#cc0000;text-decoration:none;">${c.name}</a>`).join("")}
     </nav>`;
 
     const html = `<!doctype html>
 <html ⚡ lang="hi">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <meta name="robots" content="index, follow">
+  <meta name="description" content="${seoDescription}">
   <link rel="canonical" href="${canonical}">
   <title>${escapeHtml(title)}</title>
   <script async src="https://cdn.ampproject.org/v0.js"></script>
@@ -128,13 +140,12 @@ export async function GET(request: NextRequest, { params }: { params: { category
   @-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}
   @-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}
   @keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}
-</style>
-
-<noscript>
-  <style amp-boilerplate>
-    body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}
   </style>
-</noscript>
+  <noscript>
+    <style amp-boilerplate>
+      body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}
+    </style>
+  </noscript>
 
   <style amp-custom>
     body{font-family: system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; background:#fff;color:#111;margin:0;padding:12px;}
@@ -142,13 +153,15 @@ export async function GET(request: NextRequest, { params }: { params: { category
     header{background:#cc0000;color:#fff;padding:12px;text-align:center;border-radius:6px;}
     h1{font-size:28px;line-height:1.2;margin:16px 0;}
     .meta{color:#666;font-size:0.9rem;margin-bottom:14px;}
+    .excerpt{font-style:italic;border-left:4px solid #cc0000;padding-left:12px;margin-bottom:12px;color:#444;}
     .content p{margin:0 0 1rem 0;line-height:1.65;font-size:1rem;}
+    .content ul{margin:0 0 1rem 1.25rem;}
+    .content ol{margin:0 0 1rem 1.25rem;}
     footer{border-top:1px solid #eee;margin-top:20px;padding-top:12px;color:#666;font-size:0.85rem;text-align:center;}
     a{color:#cc0000}
     amp-img{border-radius:8px;display:block;margin:0 0 1rem 0;}
   </style>
 </head>
-
 <body>
   <div class="container">
     <header><h2 style="margin:0;font-size:1.25rem">Khabar24Live</h2></header>
@@ -159,6 +172,7 @@ export async function GET(request: NextRequest, { params }: { params: { category
       <h1>${escapeHtml(title)}</h1>
       <div class="meta">By ${escapeHtml(authorName)} | ${escapeHtml(date)}</div>
 
+      ${summary}
       ${imageUrl ? `<amp-img src="${imageUrl}" alt="${escapeHtml(imageAlt)}" width="800" height="450" layout="responsive"></amp-img>` : ""}
 
       <div class="content">
@@ -174,7 +188,9 @@ export async function GET(request: NextRequest, { params }: { params: { category
 </body>
 </html>`;
 
-    return new NextResponse(html, { headers: { "Content-Type": "text/html; charset=utf-8" } });
+    return new NextResponse(html, {
+      headers: { "Content-Type": "text/html; charset=utf-8" },
+    });
   } catch (err) {
     console.error("AMP route error:", err);
     return new NextResponse("Server error", { status: 500 });
