@@ -11,8 +11,6 @@ import { Metadata } from 'next';
 const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
 const BASE_URL = 'https://www.khabar24live.com'; // IMPORTANT: Replace with your actual domain
 
-// --- UTILITY FUNCTIONS & COMPONENTS ---
-
 // Utility function to extract only the slug from the URL segment
 const extractSlug = (slugAndId: string) => {
     // The pattern is "article-title-53175" -> we want "article-title"
@@ -39,51 +37,7 @@ async function getPost(slug: string) {
   }
 }
 
-/**
- * Renders the JSON-LD Script for NewsArticle Structured Data.
- * This is crucial for Google News, Top Stories, and Rich Snippets.
- */
-function ArticleJsonLd({ post, authorName, imageUrl, articlePath }: any) {
-    const ldData = {
-        '@context': 'https://schema.org',
-        '@type': 'NewsArticle',
-        'mainEntityOfPage': {
-            '@type': 'WebPage',
-            '@id': articlePath,
-        },
-        'headline': post.title.rendered.replace(/<[^>]*>?/gm, ''),
-        'image': [
-            imageUrl,
-            // Add other image sizes here if available and required by Google
-        ],
-        'datePublished': post.date,
-        'dateModified': post.modified_gmt || post.date,
-        'author': {
-            '@type': 'Person',
-            'name': authorName,
-        },
-        'publisher': {
-            '@type': 'Organization',
-            'name': 'Khabar24Live', // Your Organization Name
-            'logo': {
-                '@type': 'ImageObject',
-                // Logo must be valid for Rich Results (112x112 px minimum)
-                'url': `${BASE_URL}/logo-112x112.png`, 
-            },
-        },
-        'description': post.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 200),
-    };
-
-    return (
-        <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(ldData) }}
-        />
-    );
-}
-
 // === METADATA & SEO GENERATION ===
-
 export async function generateMetadata({ params }: { params: { slugAndId: string } }): Promise<Metadata> {
   const postSlug = extractSlug(params.slugAndId);
   const post = await getPost(postSlug);
@@ -96,20 +50,14 @@ export async function generateMetadata({ params }: { params: { slugAndId: string
   const ampPath = `${articlePath}/amp`;
   const title = post.title.rendered.replace(/<[^>]*>?/gm, ''); // Clean title
   const description = post.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...'; // Clean excerpt
-  const imageUrl = post._embedded['wp:featuredmedia']?.[0]?.source_url || '/placeholder.jpg';
 
   return {
     title: title,
     description: description,
     
-    // Canonical URL setup
-    alternates: {
-      canonical: articlePath,
-      // AMP Alternate Link
-      other: [{ rel: 'amphtml', href: ampPath }],
-    },
+    
 
-    // Open Graph / Social Media metadata (for Facebook, etc.)
+    // Open Graph / Social Media metadata
     openGraph: {
       title: title,
       description: description,
@@ -117,28 +65,17 @@ export async function generateMetadata({ params }: { params: { slugAndId: string
       type: 'article',
       images: [
         {
-          url: imageUrl,
+          url: post._embedded['wp:featuredmedia']?.[0]?.source_url || '/placeholder.jpg',
           alt: title,
         },
       ],
       publishedTime: post.date,
       modifiedTime: post.modified_gmt || post.date,
-      siteName: 'Khabar24Live',
     },
-    
-    // Twitter Card metadata
-    twitter: {
-        card: 'summary_large_image',
-        title: title,
-        description: description,
-        images: [imageUrl],
-        creator: post._embedded.author?.[0]?.name || '@Khabar24Live', // Replace with a valid Twitter handle if known
-    }
+    // Add other SEO tags like Twitter and JSON-LD here
   };
 }
 
-
-// === MAIN COMPONENT ===
 
 export default async function PostPage({ params }: { 
     params: { category: string; slugAndId: string } 
@@ -162,19 +99,10 @@ export default async function PostPage({ params }: {
   
   const formattedDate = format(parseISO(date), 'dd MMMM yyyy, hh:mm a', { locale: hi });
   const categoryName = params.category.charAt(0).toUpperCase() + params.category.slice(1).replace('-', ' ');
-  const articlePath = `${BASE_URL}/${params.category}/${params.slugAndId}`;
 
 
   return (
     <article className="bg-white p-6 rounded-lg shadow-lg">
-      
-      {/* JSON-LD Structured Data Script */}
-      <ArticleJsonLd 
-        post={post} 
-        authorName={authorName} 
-        imageUrl={imageUrl} 
-        articlePath={articlePath}
-      />
       
       {/* Category Link */}
       <Link href={`/${params.category}`} className="text-red-700 hover:underline text-sm font-semibold uppercase">
