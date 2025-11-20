@@ -1,27 +1,37 @@
 // app/page.tsx
 import { ArticleCard } from '@/components/ArticleCard';
 
-const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
-
-type WPPost = {
+// Define the type for a single post object, matching the requirements of ArticleCard
+// This interface is copied from or should match the WPPost interface in ArticleCard.tsx
+interface Post {
   id: number;
-  date: string;
+  slug: string;
   title: { rendered: string };
   excerpt: { rendered: string };
-  slug: string;
-  _embedded?: {
-    'wp:featuredmedia'?: any[];
-    'wp:term'?: any[];
+  date: string;
+  link: string; // Added link as it was in your original Post definition
+  _embedded: {
+    'wp:featuredmedia'?: Array<{
+      source_url?: string;
+      alt_text?: string;
+    }>;
+    'wp:term'?: Array<Array<{
+      slug: string;
+      name: string;
+    }>>;
     [key: string]: any;
   };
-};
+}
+
+
+const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
+
 
 // Next.js recommended data fetching function
-async function getLatestPosts() {
+// The return type is updated to Promise<Post[]>
+async function getLatestPosts(): Promise<Post[]> {
   try {
-    // Fetch top 10 posts, embedding featured media, author, and terms (categories/tags)
     const res = await fetch(`${API_URL}/posts?_embed&per_page=10`, {
-      // Use Incremental Static Regeneration (ISR) to revalidate cache every 60 seconds
       next: { revalidate: 60 },
     });
     
@@ -29,7 +39,9 @@ async function getLatestPosts() {
       throw new Error(`Failed to fetch posts: ${res.statusText}`);
     }
     
-    return res.json();
+    // Cast the result to Post[]
+    // Note: The API response will contain other fields, but we only cast to the fields we defined
+    return res.json() as Promise<Post[]>; 
   } catch (error) {
     console.error('API Fetch Error:', error);
     return [];
@@ -47,11 +59,11 @@ export default async function HomePage() {
       {posts.length === 0 ? (
         <p className="text-lg">No posts found or API error.</p>
       ) : (
-      posts.map((post: WPPost) => (
-  <ArticleCard key={post.id} post={post} />
-))
-
-
+        // The 'post' parameter now correctly satisfies the WPPost requirements
+        posts.map((post) => (
+          // TypeScript now knows 'post' has the correct shape for ArticleCard
+          <ArticleCard key={post.id} post={post} /> 
+        ))
       )}
     </section>
   );
