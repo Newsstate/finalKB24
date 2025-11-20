@@ -22,3 +22,32 @@ body {
   color: rgb(var(--foreground-rgb));
   background: #ffffff;
 }
+
+.custom-article-body h2 {
+  font-size: 1.3rem !important; 
+  font-weight: 700 !important;
+  margin-top: 2rem !important;
+  margin-bottom: 1rem !important;
+  line-height: 1.4 !important;
+}
+
+/* Style unordered lists (bullets) */
+.custom-article-body ul {
+  list-style-type: disc !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* Style ordered lists (numbers) */
+.custom-article-body ol {
+  list-style-type: decimal !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* Style list items */
+.custom-article-body li {
+  margin-bottom: 0.6rem !important;
+  line-height: 1.6 !important;
+  font-size: 1.125rem; /* matches text-lg */
+}

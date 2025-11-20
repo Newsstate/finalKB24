@@ -128,6 +128,13 @@ export default async function PostPage({ params }: {
         <span>By **{authorName}** | Published: {formattedDate}</span>
       </div>
 
+      {/* Article Summary (Excerpt) */}
+      {post.excerpt.rendered && (
+        <div className="text-lg font-semibold italic text-gray-700 mb-6 border-l-4 border-red-500 pl-4">
+            {parse(post.excerpt.rendered)}
+        </div>
+      )}
+
       {/* Featured Media Image */}
       <div className="relative w-full aspect-video mb-6">
         <Image 
@@ -141,18 +148,14 @@ export default async function PostPage({ params }: {
         />
       </div>
 
-      {/* Article Summary (Excerpt) */}
-      {post.excerpt.rendered && (
-        <div className="text-lg font-semibold italic text-gray-700 mb-6 border-l-4 border-red-500 pl-4">
-            {parse(post.excerpt.rendered)}
-        </div>
-      )}
+      
 
       {/* Main Content */}
-      <div className="prose max-w-none text-lg leading-relaxed text-black">
-        {/* Render HTML content safely */}
-        {parse(content)}
-      </div>
+      <div className="prose max-w-none text-lg leading-relaxed text-black custom-article-body">
+  {parse(
+    content.replace(/<\/p>/g, '</p><br/>')
+  )}
+</div>
       
     </article>
   );
