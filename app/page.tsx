@@ -34,9 +34,10 @@ export default async function HomePage() {
       {posts.length === 0 ? (
         <p className="text-lg">No posts found or API error.</p>
       ) : (
-        posts.map((post) => (
-          <ArticleCard key={post.id} post={post} />
-        ))
+       posts.map((post: WPPost) => (
+  <ArticleCard key={post.id} post={post} />
+))
+
       )}
     </section>
   );
