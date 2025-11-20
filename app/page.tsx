@@ -3,6 +3,19 @@ import { ArticleCard } from '@/components/ArticleCard';
 
 const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
 
+type WPPost = {
+  id: number;
+  date: string;
+  title: { rendered: string };
+  excerpt: { rendered: string };
+  slug: string;
+  _embedded?: {
+    'wp:featuredmedia'?: any[];
+    'wp:term'?: any[];
+    [key: string]: any;
+  };
+};
+
 // Next.js recommended data fetching function
 async function getLatestPosts() {
   try {
@@ -34,9 +47,10 @@ export default async function HomePage() {
       {posts.length === 0 ? (
         <p className="text-lg">No posts found or API error.</p>
       ) : (
-       posts.map((post: WPPost) => (
+      posts.map((post: WPPost) => (
   <ArticleCard key={post.id} post={post} />
 ))
+
 
       )}
     </section>
