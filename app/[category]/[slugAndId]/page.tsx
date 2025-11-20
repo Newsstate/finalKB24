@@ -106,7 +106,7 @@ export async function generateMetadata({ params }: { params: { slugAndId: string
     alternates: {
       canonical: articlePath,
       // AMP Alternate Link
-      other: [{ rel: 'amphtml', href: ampPath }],
+     links: [{ rel: 'amphtml', url: ampPath }],
     },
 
     // Open Graph / Social Media metadata (for Facebook, etc.)
@@ -235,4 +235,5 @@ export async function generateStaticParams() {
     return [
         { category: 'entertainment', slugAndId: 'its-confirmed-korean-action-star-don-lee-joins-prabhas-triptii-dimri-spirit-directed-by-sandeep-reddy-vanga-53175' },
     ];
+
 }
