@@ -44,9 +44,7 @@ export async function generateMetadata({ params }: { params: { slugAndId: string
     return { title: 'Not Found' };
   }
 
-  const articlePath = `${BASE_URL}/${params.category}/${params.slugAndId}`;  // FIXED
-  const ampPath = `${articlePath}/amp`;
-
+  const articlePath = `${BASE_URL}/${params.category}/${params.slugAndId}`;
   const title = post.title.rendered.replace(/<[^>]*>?/gm, '');
   const description = post.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...';
 
@@ -79,12 +77,11 @@ export async function generateMetadata({ params }: { params: { slugAndId: string
       googleBot: {
         index: true,
         follow: true,
-        maxImagePreview: "large",
+        "max-image-preview": "large", // ✅ fixed TypeScript error
       },
-    }
+    },
   };
 }
-
 
 // =========================
 // 🔥 Main Article Page
