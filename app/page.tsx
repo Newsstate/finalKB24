@@ -53,9 +53,7 @@ export default async function HomePage() {
 
   return (
     <section>
-      <h1 className="text-3xl font-extrabold mb-6 border-b pb-2 text-red-700">
-        लेटेस्ट न्यूज़ (Latest News)
-      </h1>
+      
       {posts.length === 0 ? (
         <p className="text-lg">No posts found or API error.</p>
       ) : (
