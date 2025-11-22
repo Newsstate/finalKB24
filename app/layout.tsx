@@ -5,7 +5,7 @@ import { Footer } from '@/components/Footer';
 import Link from 'next/link';
 import { parseISO, format } from 'date-fns';
 import { hi } from 'date-fns/locale';
-import Image from 'next/image';
+import Image from 'next/image'; // Image is needed for post thumbnails
 
 const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
 
@@ -19,14 +19,15 @@ export const metadata = {
 };
 
 // --- TYPE DEFINITIONS ---
-interface CategoryPost { // Renamed from RecentPost for clarity
+interface CategoryPost {
   id: number;
   slug: string;
   date: string;
   title: { rendered: string };
   categories: number[];
   _embedded?: {
-    'wp:featuredmedia'?: [{ source_url: string; alt_text: string }];
+    // Array type is safer for featured media
+    'wp:featuredmedia'?: Array<{ source_url: string; alt_text: string }>; 
   };
 }
 
@@ -64,8 +65,7 @@ async function getCategorySidebarPosts(categoryId: number): Promise<CategoryPost
   }
 }
 
-// --- SIDEBAR CATEGORY POSTS COMPONENT ---
-// Renamed from RecentPostsSidebar
+// --- SIDEBAR CATEGORY POSTS COMPONENT (WITH THUMBNAILS) ---
 const CategoryPostsSidebar: React.FC<{ posts: CategoryPost[], categoryMap: Map<number, string> }> = ({ posts, categoryMap }) => {
   if (posts.length === 0) {
     return (
@@ -78,7 +78,7 @@ const CategoryPostsSidebar: React.FC<{ posts: CategoryPost[], categoryMap: Map<n
   return (
     <div className="bg-white p-4 sm:p-4 rounded-xl shadow-lg border border-gray-200">
       <h2 className="text-xl font-bold text-gray-900 mb-4 border-b pb-2 border-red-600">
-        {SIDEBAR_CATEGORY_TITLE} {/* Use the configurable title */}
+        {SIDEBAR_CATEGORY_TITLE}
       </h2>
 
       <ul className="space-y-4">
@@ -87,12 +87,32 @@ const CategoryPostsSidebar: React.FC<{ posts: CategoryPost[], categoryMap: Map<n
           const primaryCatId = post.categories?.[0];
           const categorySlug = primaryCatId ? categoryMap.get(primaryCatId) : 'uncategorized';
           const postPath = `/${categorySlug}/${post.slug}-${post.id}`;
+          
+          // ✅ Image logic restored
+          const featuredMedia = post._embedded?.['wp:featuredmedia']?.[0];
+          // Use a generic placeholder if no image exists
+          const imageUrl = featuredMedia?.source_url || '/placeholder.jpg'; 
+          const imageAlt = featuredMedia?.alt_text || title;
 
           return (
             <li key={post.id} className="pb-4 border-b border-gray-200 last:border-b-0 last:pb-0">
-              <Link href={postPath} className="block group hover:text-red-600 transition">
+              {/* ✅ Added flex container for image and text */}
+              <Link href={postPath} className="flex gap-3 group hover:text-red-600 transition">
+                
+                {/* 🎯 IMAGE THUMBNAIL */}
+                <div className="relative w-20 h-16 flex-shrink-0">
+                  <Image
+                    src={imageUrl}
+                    alt={imageAlt}
+                    fill
+                    className="rounded object-cover"
+                    unoptimized // Use `unoptimized` for external/WP media without Next.js optimization service
+                  />
+                </div>
+
+                {/* 🎯 TEXT CONTENT */}
                 <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-gray-800 group-hover:text-red-700 line-clamp-3">
+                  <h3 className="text-sm font-semibold text-gray-800 group-hover:text-red-700 leading-tight line-clamp-3">
                     {title}
                   </h3>
                   <p className="text-xs text-gray-500 mt-1">
@@ -110,9 +130,8 @@ const CategoryPostsSidebar: React.FC<{ posts: CategoryPost[], categoryMap: Map<n
 
 // --- ROOT LAYOUT ---
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // 🎯 Fetch posts for the specific sidebar category
   const [sidebarPosts, categoryMap] = await Promise.all([
-    getCategorySidebarPosts(SIDEBAR_CATEGORY_ID), // 👈 Call the new function
+    getCategorySidebarPosts(SIDEBAR_CATEGORY_ID),
     getCategoryMap()
   ]);
 
@@ -132,36 +151,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
             {/* Sidebar */}
             <aside className="w-full lg:w-1/4 lg:sticky lg:top-24 h-fit space-y-8">
-
-           {/* ✅ Bottom Ad Banner (Line 153) */}
-           <div className="p-2 bg-white rounded-xl shadow-lg border border-gray-200">
-                <div className="text-center">
-                  <Image // 👈 FIX: Changed from <img>
-                    src="https://cdn.dribbble.com/users/3460/screenshots/14996353/media/30e1106f81277828efcb4f644ba8ce40.jpg"
-                    alt="Advertisement"
-                    width={300}
-                    height={250}
-                    className="mx-auto rounded-lg"
-                  />
-                </div>
-              </div>
-</div>
-              </div>
-              <CategoryPostsSidebar posts={sidebarPosts} categoryMap={categoryMap} /> {/* 👈 Updated Component Name and Prop */}
-
-           {/* ✅ Top Ad Banner (Line 139) */}
-           <div className="p-2 bg-white rounded-xl shadow-lg border border-gray-200">
-                <div className="text-center">
-                  <Image // 👈 FIX: Changed from <img>
-                      src="https://www.gourmetads.com/wp-content/uploads/2022/01/learn-more-heinz-300x250-call-to-action.jpg"
-                      alt="Advertisement"
-                      width={300}
-                      height={250}
-                      className="mx-auto rounded-lg"
-                  />
-                </div>
-              </div>
-              </div>
+              
+              {/* 🎯 Category Posts Sidebar */}
+              <CategoryPostsSidebar posts={sidebarPosts} categoryMap={categoryMap} /> 
 
             </aside>
 
