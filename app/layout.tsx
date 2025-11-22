@@ -5,7 +5,7 @@ import { Footer } from '@/components/Footer';
 import Link from 'next/link';
 import { parseISO, format } from 'date-fns';
 import { hi } from 'date-fns/locale';
-import Image from 'next/image'; // Image is needed for post thumbnails
+import Image from 'next/image'; 
 
 const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
 
@@ -65,7 +65,7 @@ async function getCategorySidebarPosts(categoryId: number): Promise<CategoryPost
   }
 }
 
-// --- SIDEBAR CATEGORY POSTS COMPONENT (WITH THUMBNAILS) ---
+// --- SIDEBAR CATEGORY POSTS COMPONENT (THUMBNAILS REMOVED) ---
 const CategoryPostsSidebar: React.FC<{ posts: CategoryPost[], categoryMap: Map<number, string> }> = ({ posts, categoryMap }) => {
   if (posts.length === 0) {
     return (
@@ -88,27 +88,14 @@ const CategoryPostsSidebar: React.FC<{ posts: CategoryPost[], categoryMap: Map<n
           const categorySlug = primaryCatId ? categoryMap.get(primaryCatId) : 'uncategorized';
           const postPath = `/${categorySlug}/${post.slug}-${post.id}`;
           
-          // ✅ Image logic restored
-          const featuredMedia = post._embedded?.['wp:featuredmedia']?.[0];
-          // Use a generic placeholder if no image exists
-          const imageUrl = featuredMedia?.source_url || '/placeholder.jpg'; 
-          const imageAlt = featuredMedia?.alt_text || title;
+          // ❌ REMOVED: Image logic (featuredMedia, imageUrl, imageAlt) is no longer used here.
 
           return (
             <li key={post.id} className="pb-4 border-b border-gray-200 last:border-b-0 last:pb-0">
-              {/* ✅ Added flex container for image and text */}
-              <Link href={postPath} className="flex gap-3 group hover:text-red-600 transition">
+              {/* 🎯 CHANGED: Reverted class from "flex gap-3" to "block" to remove image space */}
+              <Link href={postPath} className="block group hover:text-red-600 transition">
                 
-                {/* 🎯 IMAGE THUMBNAIL */}
-                <div className="relative w-20 h-16 flex-shrink-0">
-                  <Image
-                    src={imageUrl}
-                    alt={imageAlt}
-                    fill
-                    className="rounded object-cover"
-                    unoptimized // Use `unoptimized` for external/WP media without Next.js optimization service
-                  />
-                </div>
+                {/* ❌ REMOVED: Image thumbnail div and Image component */}
 
                 {/* 🎯 TEXT CONTENT */}
                 <div className="flex-1">

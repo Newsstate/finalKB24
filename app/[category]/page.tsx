@@ -5,6 +5,12 @@ import parse from 'html-react-parser';
 
 const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
 
+// --- TYPE DEFINITIONS ---
+// Interface for category data fetched for static path generation
+interface CategorySlug { // 🎯 ADDED TYPE FOR STATIC PARAMS
+  slug: string;
+}
+
 // 1. Function to find the Category ID by its slug
 async function getCategoryData(slug: string) {
     try {
@@ -56,7 +62,6 @@ export default async function CategoryPage({ params }: { params: { category: str
     }
 
     // Step 2: Get posts using the category ID
-    // 🎯 The 'posts' variable is now correctly inferred as WPPost[] from the fetch function
     const posts = await getCategoryPosts(category.id);
 
     return (
@@ -78,7 +83,7 @@ export default async function CategoryPage({ params }: { params: { category: str
                     <ArticleCard 
                         key={post.id} 
                         post={post} 
-                        variant="default" // 👈 FIX: ADD THE REQUIRED VARIANT PROP
+                        variant="default" // FIX: ADDED REQUIRED VARIANT PROP
                     />
                 ))}
             </div>
@@ -92,9 +97,12 @@ export async function generateStaticParams() {
     // This fetches a list of categories to pre-render the category pages at build time.
     try {
         const res = await fetch(`${API_URL}/categories?per_page=10`);
-        const categories = await res.json();
+        
+        // 🎯 FIX: Explicitly type the fetched array as CategorySlug[]
+        const categories: CategorySlug[] = await res.json();
         
         return categories.map((category) => ({
+            // 'category' is now correctly typed
             category: category.slug, // The dynamic part of the route
         }));
     } catch (error) {
