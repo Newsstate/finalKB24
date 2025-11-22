@@ -5,7 +5,7 @@ import { Footer } from '@/components/Footer';
 import Link from 'next/link';
 import { parseISO, format } from 'date-fns';
 import { hi } from 'date-fns/locale';
-import Image from 'next/image'; // ✅ ADD THIS IMPORT
+import Image from 'next/image';
 
 const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
 
@@ -133,31 +133,34 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             {/* Sidebar */}
             <aside className="w-full lg:w-1/4 lg:sticky lg:top-24 h-fit space-y-8">
 
-              {/* ✅ Top Ad Banner */}
-              <div className="p-2 bg-white rounded-xl shadow-lg border border-gray-200">
+           {/* ✅ Bottom Ad Banner (Line 153) */}
+           <div className="p-2 bg-white rounded-xl shadow-lg border border-gray-200">
                 <div className="text-center">
-                  <img
-                    src="https://www.gourmetads.com/wp-content/uploads/2022/01/learn-more-heinz-300x250-call-to-action.jpg"
-                    alt="Advertisement"
-                    width={300}
-                    height={250}
-                    className="mx-auto rounded-lg"
-    />
-</div>
-              </div>
-              <CategoryPostsSidebar posts={sidebarPosts} categoryMap={categoryMap} /> {/* 👈 Updated Component Name and Prop */}
-
-              {/* ✅ Bottom Ad Banner */}
-              <div className="p-2 bg-white rounded-xl shadow-lg border border-gray-200">
-                <div className="text-center">
-                  <img
-                    src="https://www.gourmetads.com/wp-content/uploads/2022/01/learn-more-heinz-300x250-call-to-action.jpg"
+                  <Image // 👈 FIX: Changed from <img>
+                    src="https://cdn.dribbble.com/users/3460/screenshots/14996353/media/30e1106f81277828efcb4f644ba8ce40.jpg"
                     alt="Advertisement"
                     width={300}
                     height={250}
                     className="mx-auto rounded-lg"
                   />
                 </div>
+              </div>
+</div>
+              </div>
+              <CategoryPostsSidebar posts={sidebarPosts} categoryMap={categoryMap} /> {/* 👈 Updated Component Name and Prop */}
+
+           {/* ✅ Top Ad Banner (Line 139) */}
+           <div className="p-2 bg-white rounded-xl shadow-lg border border-gray-200">
+                <div className="text-center">
+                  <Image // 👈 FIX: Changed from <img>
+                      src="https://www.gourmetads.com/wp-content/uploads/2022/01/learn-more-heinz-300x250-call-to-action.jpg"
+                      alt="Advertisement"
+                      width={300}
+                      height={250}
+                      className="mx-auto rounded-lg"
+                  />
+                </div>
+              </div>
               </div>
 
             </aside>

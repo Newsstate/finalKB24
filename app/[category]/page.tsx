@@ -73,12 +73,15 @@ export default async function CategoryPage({ params }: { params: { category: str
                 </p>
             ) : (
                 <div className="space-y-6">
-                    {/* ✅ FIX: 'post' is now correctly typed because 'posts' is WPPost[] */}
-                    {posts.map((post: WPPost) => ( 
-                        // Reuse the ArticleCard component for consistent listing
-                        <ArticleCard key={post.id} post={post} />
-                    ))}
-                </div>
+                {posts.map((post: WPPost) => ( 
+                    // Reuse the ArticleCard component for consistent listing
+                    <ArticleCard 
+                        key={post.id} 
+                        post={post} 
+                        variant="default" // 👈 FIX: ADD THE REQUIRED VARIANT PROP
+                    />
+                ))}
+            </div>
             )}
         </section>
     );
