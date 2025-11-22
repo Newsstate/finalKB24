@@ -1,5 +1,5 @@
 // app/[category]/page.tsx
-import { ArticleCard } from '@/components/ArticleCard';
+import { ArticleCard, WPPost } from '@/components/ArticleCard'; // ✅ IMPORT WPPost
 import { notFound } from 'next/navigation';
 import parse from 'html-react-parser';
 
@@ -23,7 +23,8 @@ async function getCategoryData(slug: string) {
 }
 
 // 2. Function to fetch posts belonging to a specific Category ID
-async function getCategoryPosts(categoryId: number) {
+// 🎯 Added return type annotation for clarity and safety
+async function getCategoryPosts(categoryId: number): Promise<WPPost[]> {
     try {
         // Fetch posts filtered by category ID, embedding details
         const res = await fetch(`${API_URL}/posts?_embed&categories=${categoryId}&per_page=10`, {
@@ -34,7 +35,7 @@ async function getCategoryPosts(categoryId: number) {
         if (!res.ok) {
             return [];
         }
-        return res.json();
+        return res.json() as Promise<WPPost[]>; // Cast to the correct type
         
     } catch (error) {
         console.error('Error fetching category posts:', error);
@@ -55,6 +56,7 @@ export default async function CategoryPage({ params }: { params: { category: str
     }
 
     // Step 2: Get posts using the category ID
+    // 🎯 The 'posts' variable is now correctly inferred as WPPost[] from the fetch function
     const posts = await getCategoryPosts(category.id);
 
     return (
@@ -67,11 +69,12 @@ export default async function CategoryPage({ params }: { params: { category: str
             
             {posts.length === 0 ? (
                 <p className="text-lg text-gray-600">
-                    इस कैटेगरी (**{parse(category.name)}**) में फ़िलहाल कोई पोस्ट उपलब्ध नहीं है।
+                    इस कैटेगरी (**{parse(category.name)}**) में फ़िलहाल कोई पोस्ट उपलब्ध नहीं है।
                 </p>
             ) : (
                 <div className="space-y-6">
-                    {posts.map((post) => (
+                    {/* ✅ FIX: 'post' is now correctly typed because 'posts' is WPPost[] */}
+                    {posts.map((post: WPPost) => ( 
                         // Reuse the ArticleCard component for consistent listing
                         <ArticleCard key={post.id} post={post} />
                     ))}

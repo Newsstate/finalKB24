@@ -5,6 +5,7 @@ import { Footer } from '@/components/Footer';
 import Link from 'next/link';
 import { parseISO, format } from 'date-fns';
 import { hi } from 'date-fns/locale';
+import Image from 'next/image'; // ✅ ADD THIS IMPORT
 
 const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
 
