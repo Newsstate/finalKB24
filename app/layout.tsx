@@ -134,15 +134,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
               {/* ✅ Top Ad Banner */}
               <div className="p-2 bg-white rounded-xl shadow-lg border border-gray-200">
-                <div className="text-center">
-                  <img
-                    src="https://www.gourmetads.com/wp-content/uploads/2022/01/learn-more-heinz-300x250-call-to-action.jpg"
-                    alt="Advertisement"
-                    width={300}
-                    height={250}
-                    className="mx-auto rounded-lg"
-                  />
-                </div>
+              <div className="text-center">
+    <Image // 👈 Changed to Image
+        src="https://www.gourmetads.com/wp-content/uploads/2022/01/learn-more-heinz-300x250-call-to-action.jpg"
+        alt="Advertisement"
+        width={300} // Keep width/height for fixed sizes
+        height={250}
+        className="mx-auto rounded-lg"
+    />
+</div>
               </div>
 
               {/* 🎯 Category Posts Sidebar */}
