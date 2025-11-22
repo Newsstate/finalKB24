@@ -11,20 +11,36 @@ import { Metadata } from 'next';
 const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
 const BASE_URL = 'https://www.khabar24live.com';
 
+// --- TYPE DEFINITIONS ---
+interface WPPost {
+  id: number;
+  slug: string;
+  date: string;
+  modified: string;
+  modified_gmt: string;
+  title: { rendered: string };
+  excerpt: { rendered: string };
+  content: { rendered: string };
+  _embedded: {
+    author?: Array<{ name: string; avatar_urls?: { [key: number]: string } }>;
+    'wp:featuredmedia'?: Array<{ source_url: string; alt_text: string; width: number; height: number; }>;
+  };
+}
+
 // Extract only slug from "title-53211"
 const extractSlug = (slugAndId: string) => {
   const parts = slugAndId.split('-');
   return parts.slice(0, -1).join('-');
 };
 
-async function getPost(slug: string) {
+async function getPost(slug: string): Promise<WPPost | null> {
   try {
     const res = await fetch(`${API_URL}/posts?_embed&slug=${slug}`, {
       next: { revalidate: 1800 },
     });
 
     if (!res.ok) return null;
-    const posts = await res.json();
+    const posts: WPPost[] = await res.json();
     return posts.length > 0 ? posts[0] : null;
 
   } catch (error) {
@@ -33,8 +49,86 @@ async function getPost(slug: string) {
   }
 }
 
+// ===================================
+// 🔥 JSON-LD SCHEMA GENERATION HELPER (NewsArticle)
+// ===================================
+function getNewsArticleSchema(post: WPPost, articleUrl: string, titleText: string, descriptionText: string) {
+    const featuredMedia = post._embedded['wp:featuredmedia']?.[0];
+    const author = post._embedded.author?.[0];
+
+    return JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "NewsArticle",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": articleUrl
+        },
+        "headline": titleText,
+        "image": {
+            "@type": "ImageObject",
+            "url": featuredMedia?.source_url || `${BASE_URL}/placeholder.jpg`,
+            "width": featuredMedia?.width || 1200,
+            "height": featuredMedia?.height || 675
+        },
+        "datePublished": post.date,
+        "dateModified": post.modified_gmt || post.date,
+        "author": {
+            "@type": "Person",
+            "name": author?.name || "Khabar24Live Desk",
+            // Recommended addition for SEO: Link to the author's profile page if available
+            // "url": `${BASE_URL}/author/${author?.name.toLowerCase().replace(/\s/g, '-') || 'khabar24livedesk'}` 
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "Khabar24Live",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://www.khabar24live.com/wp-content/uploads/2025/09/khabar24live-300x300-1.jpg", 
+                "width": 600,
+                "height": 60
+            }
+        },
+        "description": descriptionText,
+        "articleBody": post.content.rendered.replace(/<[^>]*>?/gm, ' ')
+    });
+}
+
+// ===================================
+// 🔥 JSON-LD SCHEMA GENERATION HELPER (BreadcrumbList)
+// ===================================
+/**
+ * Generates the BreadcrumbList JSON-LD schema string.
+ */
+function getBreadcrumbSchema(categoryName: string, categorySlug: string, articleTitle: string, articleUrl: string) {
+    return JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "होम", // Home
+                "item": BASE_URL + "/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": categoryName,
+                "item": `${BASE_URL}/${categorySlug}`
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": articleTitle,
+                "item": articleUrl
+            }
+        ]
+    });
+}
+
+
 // =========================
-// 🔥 SEO + Metadata Block
+// SEO + Metadata Block (Remains the same)
 // =========================
 export async function generateMetadata({ params }: { params: { slugAndId: string, category: string } }): Promise<Metadata> {
   const postSlug = extractSlug(params.slugAndId);
@@ -77,7 +171,7 @@ export async function generateMetadata({ params }: { params: { slugAndId: string
       googleBot: {
         index: true,
         follow: true,
-        "max-image-preview": "large", // ✅ fixed TypeScript error
+        "max-image-preview": "large",
       },
     },
   };
@@ -95,7 +189,22 @@ export default async function PostPage({ params }: { params: { category: string;
   const title = post.title.rendered;
   const content = post.content.rendered;
   const date = post.date;
+  
+  // Clean and prepare variables for both component and schema
+  const titleText = title.replace(/<[^>]*>?/gm, '');
+  const descriptionText = post.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...';
+  const articleUrl = `${BASE_URL}/${params.category}/${params.slugAndId}`;
+  const categorySlug = params.category;
+  const categoryName =
+    params.category.charAt(0).toUpperCase() +
+    params.category.slice(1).replace(/-/g, " ");
+  const postTitleText = titleText; // Use the stripped version
 
+  // Generate the JSON-LD schemas
+  const newsArticleSchema = getNewsArticleSchema(post, articleUrl, titleText, descriptionText);
+  const breadcrumbSchema = getBreadcrumbSchema(categoryName, categorySlug, postTitleText, articleUrl);
+
+  // Use optional chaining for safer access
   const authorName = post._embedded.author?.[0]?.name || "Khabar24Live Desk";
   const authorAvatarUrl =
     post._embedded.author?.[0]?.avatar_urls?.[96] || "/default-avatar.png";
@@ -108,69 +217,118 @@ export default async function PostPage({ params }: { params: { category: string;
     locale: hi,
   });
 
-  const categoryName =
-    params.category.charAt(0).toUpperCase() +
-    params.category.slice(1).replace("-", " ");
 
   return (
-    <article className="bg-white p-4 rounded-lg shadow-lg text-black">
+    <>
+      {/* 1. NEWSARTICLE JSON-LD SCHEMA */}
+      <script 
+        type="application/ld+json" 
+        dangerouslySetInnerHTML={{ __html: newsArticleSchema }}
+      />
+      
+      {/* 2. 🔥 BREADCRUMBLIST JSON-LD SCHEMA */}
+      <script 
+        type="application/ld+json" 
+        dangerouslySetInnerHTML={{ __html: breadcrumbSchema }}
+      />
+      
+      <article className="bg-white p-2 rounded-lg shadow-lg text-black">
+        
+        {/* 🎯 BREADCRUMB NAVIGATION (Mobile Responsive) */}
+        <nav 
+          className="flex text-sm text-gray-500 mb-2 overflow-x-auto whitespace-nowrap" 
+          aria-label="Breadcrumb"
+        >
+          <ol className="inline-flex items-center space-x-1 md:space-x-3">
+            {/* 1. Home Link */}
+            <li className="inline-flex items-center">
+              <Link 
+                href="/" 
+                className="text-gray-500 hover:text-red-700 font-medium"
+              >
+                होम
+              </Link>
+            </li>
+            
+            {/* 2. Category Link */}
+            <li>
+              <div className="flex items-center">
+                <svg className="w-3 h-3 text-gray-400 mx-1 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
+                </svg>
+                <Link 
+                  href={`/${params.category}`}
+                  className="text-red-700 hover:text-red-800 font-medium capitalize flex-shrink-0"
+                >
+                  {categoryName}
+                </Link>
+              </div>
+            </li>
+            
+            {/* 3. Current Article (Title) */}
+            <li aria-current="page">
+              <div className="flex items-center">
+                <svg className="w-3 h-3 text-gray-400 mx-1 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
+                </svg>
+                {/* Truncated title for mobile views */}
+                <span className="text-gray-900 line-clamp-1 max-w-xs"> 
+                  {postTitleText}
+                </span>
+              </div>
+            </li>
+          </ol>
+        </nav>
 
-      {/* Category Link */}
-      <Link
-        href={`/${params.category}`}
-        className="text-red-700 hover:underline text-sm font-semibold uppercase"
-      >
-        {categoryName}
-      </Link>
+        {/* Title */}
+        <h1
+          className="text-4xl font-extrabold mt-2 mb-4 text-gray-900"
+          style={{ lineHeight: "2.9rem" }}
+        >
+          {parse(title)}
+        </h1>
 
-      {/* Title */}
-      <h1
-        className="text-4xl font-extrabold mt-2 mb-4 text-gray-900"
-        style={{ lineHeight: "2.9rem" }}
-      >
-        {parse(title)}
-      </h1>
-
-      {/* Author + Date */}
-      <div className="flex items-center text-sm text-gray-500 mb-6 border-b pb-4">
-        <Image
-          src={authorAvatarUrl}
-          alt={authorName}
-          width={32}
-          height={32}
-          className="rounded-full mr-3"
-          unoptimized
-        />
-        <span>
-          By {authorName} | Published: {formattedDate}
-        </span>
-      </div>
-
-      {/* Excerpt */}
-      {post.excerpt.rendered && (
-        <div className="text-lg font-semibold italic text-gray-700 mb-6 border-l-4 border-red-500 pl-4">
-          {parse(post.excerpt.rendered)}
+        {/* Author + Date */}
+        <div className="flex items-center text-sm text-gray-500 mb-6 border-b pb-4">
+          <Image
+            src={authorAvatarUrl}
+            alt={authorName}
+            width={32}
+            height={32}
+            className="rounded-full mr-3"
+            unoptimized
+          />
+          <span>
+            By {authorName} | Published: {formattedDate}
+          </span>
         </div>
-      )}
 
-      {/* Featured Image */}
-      <div className="relative w-full aspect-video mb-6">
-        <Image
-          src={imageUrl}
-          alt={imageAlt}
-          fill
-          sizes="100vw"
-          style={{ objectFit: "cover" }}
-          className="rounded-xl"
-          unoptimized
-        />
-      </div>
+        {/* Excerpt */}
+        {post.excerpt.rendered && (
+          <div className="text-lg font-semibold italic text-gray-700 mb-6 border-l-4 border-red-500 pl-4">
+            {parse(post.excerpt.rendered)}
+          </div>
+        )}
 
-      {/* Main Content */}
-      <div className="prose max-w-none text-lg leading-relaxed text-black custom-article-body">
-        {parse(content.replace(/<\/p>/g, "</p><br/>"))}
-      </div>
-    </article>
+        {/* Featured Image */}
+        <div className="relative w-full aspect-video mb-6">
+          <Image
+            src={imageUrl}
+            alt={imageAlt}
+            fill
+            sizes="100vw"
+            style={{ objectFit: "cover" }}
+            className="rounded-xl"
+            unoptimized
+          />
+        </div>
+
+        {/* Main Content */}
+        <div className="prose max-w-none text-lg leading-relaxed text-black custom-article-body">
+          {parse(content.replace(/<\/p>/g, "</p><br/>"))}
+        </div>
+      </article>
+    </>
   );
 }
 

@@ -146,7 +146,7 @@ export default async function HomePage() {
   const khelPosts = await getCategoryPosts(KHEL_CATEGORY_ID); 
 
   return (
-    <main className="max-w-7xl mx-auto px-4 py-6">
+    <main className="max-w-7xl mx-auto px-2 py-6">
       
     
 

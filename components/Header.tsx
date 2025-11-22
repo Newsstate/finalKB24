@@ -1,5 +1,6 @@
 // components/Header.tsx
 import Link from 'next/link';
+import Image from 'next/image'; 
 
 // Define the categories (copied from layout.tsx)
 const categories = [
@@ -24,23 +25,34 @@ const categories = [
     { slug: 'lifestyle', name: 'लाइफस्टाइल' },
 ];
 
+const LOGO_URL = "https://www.khabar24live.com/wp-content/uploads/2025/09/khabar24live-300x300-1.jpg";
+
 export function Header() {
   return (
     <>
-      {/* === MAIN HEADER (Logo/Branding) - Stays at the top === */}
-      {/* z-30 ensures it sits above the sticky nav bar */}
-      <header className="bg-red-700 text-white shadow-lg sticky top-0 z-30">
-        <div className="container mx-auto p-4 flex justify-between items-center">
-          <Link href="/" className="text-3xl font-bold">
-            Khabar24Live
+      {/* === MAIN HEADER (Logo/Branding) === */}
+      {/* 🎯 CHANGED: bg-red-700 to bg-white. Removed text-white (not needed with white BG) */}
+      <header className="bg-white shadow-lg sticky top-0 z-30">
+        <div className="container mx-auto p-2 flex justify-between items-center">
+          
+          <Link href="/" className="flex items-center">
+            <Image
+                src={LOGO_URL}
+                alt="Khabar24Live Logo"
+                width={150} // Set appropriate width for display
+                height={40} // Set appropriate height for display
+                unoptimized
+                priority
+                className="rounded-sm" 
+            />
           </Link>
+          
           {/* Optional: You can place a search box or ad space here */}
         </div>
       </header>
 
       {/* === HORIZONTAL CATEGORY NAVIGATION BAR (Sticky Position) === */}
-      {/* top-[64px] positions it just below the header (assuming header height is ~64px/4rem) */}
-      {/* z-20 keeps it below the main header but sticky */}
+      {/* The navigation bar background remains dark for visual separation */}
       <nav className="bg-gray-800 text-white shadow-md sticky top-[64px] z-20">
         <div 
           className="container mx-auto px-4 py-2 flex overflow-x-auto whitespace-nowrap scrollbar-hide"
@@ -49,7 +61,7 @@ export function Header() {
             <Link 
               key={cat.slug}
               href={`/${cat.slug}`}
-              // flex-shrink-0 prevents items from condensing, forcing overflow
+              // Hover state changed to bg-red-700 for contrast
               className="text-sm font-medium px-4 py-1 hover:bg-red-700 transition duration-150 flex-shrink-0"
             >
               {cat.name}
