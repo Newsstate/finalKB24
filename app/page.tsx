@@ -110,9 +110,7 @@ async function ThreeCategorySections() {
     { id: 22, title: "बिजनेस" },
     { id: 25, title: "ऑटो" },
     { id: 79, title: "खेल" },
-    { id: 67, title: "मध्य प्रदेश" },
-    { id: 68, title: "उत्तर प्रदेश " },
-    { id: 80, title: "उत्तराखंड " },
+
     
   ];
 

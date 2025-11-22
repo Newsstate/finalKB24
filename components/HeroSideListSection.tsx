@@ -39,31 +39,34 @@ export async function HeroSideListSection() {
   const listPosts = posts.slice(1); // Get the next 5 posts
 
   return (
+    // 1. Outer section keeps a standard margin or no margin, depending on your layout needs
     <section className="my-10">
-      <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
-        <h2 className="text-2xl font-extrabold text-gray-900 border-l-4 border-red-600 pl-3">
-          ताज़ा खबरें (Recent Posts)
-        </h2>
-        {/* You can link this to your main news page or a 'recent' archive */}
-        <a href="#" className="text-red-600 text-sm font-semibold hover:underline">
-          View All →
-        </a>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Hero left (Big card) */}
-        <div className="lg:col-span-2">
-          <ArticleCard post={heroPost} variant="hero" />
+        
+        {/* 2. Title/Control Bar: Applied the requested margins as Tailwind classes */}
+        <div className="flex flex-wrap justify-between items-center -mt-10 mb-10 gap-1"> 
+            <h2 className="text-2xl font-extrabold text-gray-900 border-l-4 border-red-600 pl-3">
+                ताज़ा खबरें (Recent Posts)
+            </h2>
+            <a href="#" className="text-red-600 text-sm font-semibold hover:underline">
+                View All →
+            </a>
         </div>
 
-        {/* Right list (Small items) */}
-        <div className="space-y-4 lg:border-l lg:pl-4">
-          {listPosts.map((post) => (
-            // The 'list' variant is perfect for the small vertical items
-            <ArticleCard key={post.id} post={post} variant="list" />
-          ))}
+        {/* 3. Article Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Hero left (Big card) */}
+            <div className="lg:col-span-2">
+                <ArticleCard post={heroPost} variant="hero" />
+            </div>
+
+            {/* Right list (Small items) */}
+            <div className="space-y-4 lg:border-l lg:pl-4">
+                {listPosts.map((post) => (
+                    // The 'list' variant is perfect for the small vertical items
+                    <ArticleCard key={post.id} post={post} variant="list" />
+                ))}
+            </div>
         </div>
-      </div>
     </section>
   );
 }

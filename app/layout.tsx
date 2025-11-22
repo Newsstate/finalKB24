@@ -8,13 +8,17 @@ import { hi } from 'date-fns/locale';
 
 const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
 
+// ✅ CONFIGURATION FOR SIDEBAR CATEGORY
+const SIDEBAR_CATEGORY_ID = 1; // 👈 CHANGE THIS TO YOUR DESIRED CATEGORY ID
+const SIDEBAR_CATEGORY_TITLE = 'ट्रेंडिंग न्यूज़'; // 👈 Update this title
+
 export const metadata = {
   title: 'Khabar24Live - Next.js',
   description: 'Recreation of khabar24live.com using Next.js and WordPress API',
 };
 
 // --- TYPE DEFINITIONS ---
-interface RecentPost {
+interface CategoryPost { // Renamed from RecentPost for clarity
   id: number;
   slug: string;
   date: string;
@@ -44,34 +48,36 @@ async function getCategoryMap(): Promise<Map<number, string>> {
   return categoryMap;
 }
 
-async function getRecentPosts(): Promise<RecentPost[]> {
+// 🎯 UPDATED FETCH FUNCTION TO FILTER BY CATEGORY
+async function getCategorySidebarPosts(categoryId: number): Promise<CategoryPost[]> {
   try {
     const res = await fetch(
-      `${API_URL}/posts?_embed&_fields=id,slug,title,categories,date,_embedded&per_page=5&orderby=date`,
+      `${API_URL}/posts?categories=${categoryId}&_embed&_fields=id,slug,title,categories,date,_embedded&per_page=5&orderby=date`,
       { next: { revalidate: 600 } }
     );
     if (!res.ok) return [];
     return await res.json();
   } catch (error) {
-    console.error('Error fetching recent posts:', error);
+    console.error('Error fetching sidebar category posts:', error);
     return [];
   }
 }
 
-// --- SIDEBAR RECENT POSTS COMPONENT ---
-const RecentPostsSidebar: React.FC<{ posts: RecentPost[], categoryMap: Map<number, string> }> = ({ posts, categoryMap }) => {
+// --- SIDEBAR CATEGORY POSTS COMPONENT ---
+// Renamed from RecentPostsSidebar
+const CategoryPostsSidebar: React.FC<{ posts: CategoryPost[], categoryMap: Map<number, string> }> = ({ posts, categoryMap }) => {
   if (posts.length === 0) {
     return (
       <div className="bg-gray-100 p-3 rounded h-64 flex items-center justify-center text-gray-500">
-        No recent posts found.
+        इस कैटेगरी में कोई पोस्ट नहीं मिली।
       </div>
     );
   }
 
   return (
     <div className="bg-white p-4 sm:p-4 rounded-xl shadow-lg border border-gray-200">
-      <h2 className="text-xl font-bold text-gray-900 mb-4 border-b pb-2 border-red-300">
-        लेटेस्ट न्यूज़
+      <h2 className="text-xl font-bold text-gray-900 mb-4 border-b pb-2 border-red-600">
+        {SIDEBAR_CATEGORY_TITLE} {/* Use the configurable title */}
       </h2>
 
       <ul className="space-y-4">
@@ -103,8 +109,9 @@ const RecentPostsSidebar: React.FC<{ posts: RecentPost[], categoryMap: Map<numbe
 
 // --- ROOT LAYOUT ---
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [recentPosts, categoryMap] = await Promise.all([
-    getRecentPosts(),
+  // 🎯 Fetch posts for the specific sidebar category
+  const [sidebarPosts, categoryMap] = await Promise.all([
+    getCategorySidebarPosts(SIDEBAR_CATEGORY_ID), // 👈 Call the new function
     getCategoryMap()
   ]);
 
@@ -138,14 +145,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 </div>
               </div>
 
-              {/* ✅ Recent Posts */}
-              <RecentPostsSidebar posts={recentPosts} categoryMap={categoryMap} />
+              {/* 🎯 Category Posts Sidebar */}
+              <CategoryPostsSidebar posts={sidebarPosts} categoryMap={categoryMap} /> {/* 👈 Updated Component Name and Prop */}
 
               {/* ✅ Bottom Ad Banner */}
               <div className="p-2 bg-white rounded-xl shadow-lg border border-gray-200">
                 <div className="text-center">
                   <img
-                    src="https://cdn.dribbble.com/users/3460/screenshots/14996353/media/30e1106f81277828efcb4f644ba8ce40.jpg"
+                    src="https://www.gourmetads.com/wp-content/uploads/2022/01/learn-more-heinz-300x250-call-to-action.jpg"
                     alt="Advertisement"
                     width={300}
                     height={250}
