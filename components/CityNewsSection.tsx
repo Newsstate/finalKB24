@@ -38,7 +38,7 @@ const POSTS_PER_CITY = 9; // 3 rows of 3 articles
 // but be aware of Next.js best practices for data fetching.
 
 async function getCityPosts(categoryId: number): Promise<WPPost[]> {
-  const API_URL = "https://www.newsstate24.com/wp-json/wp/v2";
+  const API_URL = "https://khabar24live.com/wp-json/wp/v2";
   try {
     const res = await fetch(
       `${API_URL}/posts?categories=${categoryId}&_embed&per_page=${POSTS_PER_CITY}`,

@@ -6,26 +6,16 @@ import Link from 'next/link';
 import { parseISO, format } from 'date-fns';
 import { hi } from 'date-fns/locale';
 import Image from 'next/image'; 
-import Script from 'next/script'; // 👈 IMPORT THE SCRIPT COMPONENT
 
-// --- CONFIGURATION CONSTANTS ---
-const API_URL = 'https://newsstate24.com/wp-json/wp/v2';
-const GA_TRACKING_ID = 'G-TKW1SEK3SH'; 
-const ADSENSE_PUB_ID = 'ca-pub-6466761575770733'; 
-
+const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
 
 // ✅ CONFIGURATION FOR SIDEBAR CATEGORY
-const SIDEBAR_CATEGORY_ID = 1; 
-const SIDEBAR_CATEGORY_TITLE = 'ट्रेंडिंग न्यूज़'; 
-// -------------------------------
+const SIDEBAR_CATEGORY_ID = 1; // 👈 CHANGE THIS TO YOUR DESIRED CATEGORY ID
+const SIDEBAR_CATEGORY_TITLE = 'ट्रेंडिंग न्यूज़'; // 👈 Update this title
 
 export const metadata = {
-  title: 'खबर 24 लाइव (khabar24live) हिंदी न्यूज़ - ताज़ा हिंदी खबरें, ब्रेकिंग न्यूज़ 24x7',
-  description: 'khabar24live Hindi (खबर 24 लाइव) पर पढ़ें ताज़ा हिंदी खबरें, ब्रेकिंग न्यूज़, देश-दुनिया, राजनीति, खेल, मनोरंजन और अन्य बड़ी खबरें सबसे पहले।',
-  icons: {
-    icon: 'https://www.newsstate24.com/wp-content/uploads/2025/09/cropped-Fevicon.ico-180x180.jpg',          // Standard favicon
-    
-  },
+  title: 'Khabar24Live - Next.js',
+  description: 'Recreation of khabar24live.com using Next.js and WordPress API',
 };
 
 // --- TYPE DEFINITIONS ---
@@ -36,6 +26,7 @@ interface CategoryPost {
   title: { rendered: string };
   categories: number[];
   _embedded?: {
+    // Array type is safer for featured media
     'wp:featuredmedia'?: Array<{ source_url: string; alt_text: string }>; 
   };
 }
@@ -59,9 +50,9 @@ async function getCategoryMap(): Promise<Map<number, string>> {
   return categoryMap;
 }
 
+// 🎯 UPDATED FETCH FUNCTION TO FILTER BY CATEGORY
 async function getCategorySidebarPosts(categoryId: number): Promise<CategoryPost[]> {
   try {
-    // Note: The revalidate tag is for Incremental Static Regeneration (ISR) 
     const res = await fetch(
       `${API_URL}/posts?categories=${categoryId}&_embed&_fields=id,slug,title,categories,date,_embedded&per_page=5&orderby=date`,
       { next: { revalidate: 600 } }
@@ -74,7 +65,7 @@ async function getCategorySidebarPosts(categoryId: number): Promise<CategoryPost
   }
 }
 
-// --- SIDEBAR CATEGORY POSTS COMPONENT ---
+// --- SIDEBAR CATEGORY POSTS COMPONENT (THUMBNAILS REMOVED) ---
 const CategoryPostsSidebar: React.FC<{ posts: CategoryPost[], categoryMap: Map<number, string> }> = ({ posts, categoryMap }) => {
   if (posts.length === 0) {
     return (
@@ -97,9 +88,16 @@ const CategoryPostsSidebar: React.FC<{ posts: CategoryPost[], categoryMap: Map<n
           const categorySlug = primaryCatId ? categoryMap.get(primaryCatId) : 'uncategorized';
           const postPath = `/${categorySlug}/${post.slug}-${post.id}`;
           
+          // ❌ REMOVED: Image logic (featuredMedia, imageUrl, imageAlt) is no longer used here.
+
           return (
             <li key={post.id} className="pb-4 border-b border-gray-200 last:border-b-0 last:pb-0">
+              {/* 🎯 CHANGED: Reverted class from "flex gap-3" to "block" to remove image space */}
               <Link href={postPath} className="block group hover:text-red-600 transition">
+                
+                {/* ❌ REMOVED: Image thumbnail div and Image component */}
+
+                {/* 🎯 TEXT CONTENT */}
                 <div className="flex-1">
                   <h3 className="text-sm font-semibold text-gray-800 group-hover:text-red-700 leading-tight line-clamp-3">
                     {title}
@@ -117,7 +115,6 @@ const CategoryPostsSidebar: React.FC<{ posts: CategoryPost[], categoryMap: Map<n
   );
 };
 
-
 // --- ROOT LAYOUT ---
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const [sidebarPosts, categoryMap] = await Promise.all([
@@ -127,48 +124,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="hi">
-      
-      {/* 🛑 DNS Prefetching/Preconnect Links */}
-      <link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
-      <link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
-      <link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
-      <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossOrigin="anonymous" />
-      <link rel="preconnect" href="https://googleads.g.doubleclick.net" crossOrigin="anonymous" />
-      <link rel="preconnect" href="https://tpc.googlesyndication.com" crossOrigin="anonymous" />
-      
-      {/* 🛑 Google Tag (gtag.js) Script Implementation */}
-      <Script 
-        strategy="afterInteractive" 
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-      />
-      <Script
-        id="google-analytics-config" 
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_TRACKING_ID}');
-          `,
-        }}
-      />
-
-      {/* 🛑 AdSense Loader Script (LOADS MAIN ADSBYGOOGLE.JS) */}
-      <Script 
-        async 
-        strategy="afterInteractive" 
-        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUB_ID}`}
-        crossOrigin="anonymous"
-      />
-      
-      {/* 🛑 AMP Custom Element Scripts (Required for AMP-AD) */}
-      <Script 
-        strategy="lazyOnload" 
-        src="https://cdn.ampproject.org/v0/amp-ad-0.1.js" 
-        key="amp-ad" 
-      />
-      
       <body>
         <Header />
 
@@ -184,28 +139,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             {/* Sidebar */}
             <aside className="w-full lg:w-1/4 lg:sticky lg:top-24 h-fit space-y-8">
               
-              {/* 🎯 START: AD CODE BLOCK (BEFORE TRENDING POSTS) */}
-              <div className="hide-for-amp adsense-wrapper">
-                <div className="adsense-container">
-                  {/* */}
-                  <ins className="adsbygoogle"
-                    style={{ display: 'inline-block', width: '300px', height: '250px' }}
-                    data-ad-client={ADSENSE_PUB_ID}
-                    data-ad-slot="1709198458"></ins>
-                  {/* Push ad to render */}
-                  <Script id="adsense-push-sidebar-before-trending" strategy="afterInteractive">
-                    {`
-                      (window.adsbygoogle = window.adsbygoogle || []).push({});
-                    `}
-                  </Script>
-                </div>
-              </div>
-
-            
-              {/* 🎯 END: AD CODE BLOCK */}
-
-
-              {/* 🎯 Category Posts Sidebar (Your 'Trending Posts' component) */}
+              {/* 🎯 Category Posts Sidebar */}
               <CategoryPostsSidebar posts={sidebarPosts} categoryMap={categoryMap} /> 
 
             </aside>
@@ -213,35 +147,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </div>
         </main>
 
-{/* 🎯 START: FLOATING MOBILE AD (320x50) 🎯 */}
-<div 
-          // Hide on screen sizes >= sm (typically tablet/desktop), ensuring it's mobile only
-          className="sm:hidden 
-             fixed bottom-0 left-0 w-full z-50 
-             bg-white shadow-2xl p-0.5"
-        >
-            <div className="flex justify-center items-center w-full h-[50px]">
-                
-                {/* Note: The AdSense script load is already included above in the layout. 
-                  We only need the ins tag and the push command here. 
-                */}
-                <ins className="adsbygoogle"
-                     style={{ display: 'inline-block', width: '320px', height: '50px' }}
-                     data-ad-client={ADSENSE_PUB_ID}
-                     data-ad-slot="8246126457"></ins>
-                
-                {/* Push Ad Script */}
-                <Script 
-                    id="adsense-push-mobile-sticky" 
-                    strategy="afterInteractive"
-                >
-                    {`
-                      (window.adsbygoogle = window.adsbygoogle || []).push({});
-                    `}
-                </Script>
-            </div>
-        </div>
-        {/* 🎯 END: FLOATING MOBILE AD 🎯 */}
         <Footer />
       </body>
     </html>
