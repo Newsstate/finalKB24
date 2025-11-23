@@ -1,36 +1,34 @@
 // app/[category]/page.tsx
 
 import { ArticleCard, WPPost } from '@/components/ArticleCard';
-import LoadMorePosts from '@/components/LoadMorePosts'; // 🎯 NEW: Import Client Component
+import LoadMorePosts from '@/components/LoadMorePosts'; 
 import { notFound } from 'next/navigation';
 import parse from 'html-react-parser';
+import { fetchPosts as fetchPostsFromApi } from '@/lib/api'; // 🎯 NEW: Import fetcher from utility
 
 const API_URL = 'https://www.newsstate24.com/wp-json/wp/v2';
-const POSTS_PER_PAGE = 10; // 🎯 Define constant for posts per page
+const POSTS_PER_PAGE = 10; 
 
 // --- TYPE DEFINITIONS ---
 interface CategorySlug {
   slug: string;
 }
-// 🎯 Added Type for Category Data for better safety
 interface CategoryData { 
     id: number;
     name: string;
     slug: string;
-    count: number; // Important for knowing if there are more posts!
-    // ... other WP category properties
+    count: number; 
 }
 
 
-// 1. Function to find the Category ID by its slug
-async function getCategoryData(slug: string): Promise<CategoryData | null> { // 🎯 Added return type
+// 1. Function to find the Category ID by its slug (No Change)
+async function getCategoryData(slug: string): Promise<CategoryData | null> {
     try {
         const res = await fetch(`${API_URL}/categories?slug=${slug}`);
         if (!res.ok) {
             return null;
         }
-        const categories: CategoryData[] = await res.json(); // Cast to CategoryData array
-        // Return the first category object found
+        const categories: CategoryData[] = await res.json();
         return categories.length > 0 ? categories[0] : null;
 
     } catch (error) {
@@ -39,22 +37,13 @@ async function getCategoryData(slug: string): Promise<CategoryData | null> { // 
     }
 }
 
-// 2. Function to fetch posts belonging to a specific Category ID
-// 🎯 Replaced getCategoryPosts with a general fetch function
-// This function will be called by both Server Component (initial load) and Client Component (load more)
-export async function fetchPosts(categoryId: number, page: number = 1): Promise<WPPost[]> {
+// 2. Function for initial server fetch (Replaces old 'export function fetchPosts')
+async function getInitialPosts(categoryId: number): Promise<WPPost[]> {
     try {
-        // Calculate offset (page 1 is offset 0, page 2 is offset 10, etc.)
-        const offset = (page - 1) * POSTS_PER_PAGE;
-
-        // Fetch posts filtered by category ID, embedding details, and using offset
-        // Using 'offset' is often necessary if 'page' is not reliable/available in simple WP REST queries.
-        // However, standard WP REST API uses the 'page' parameter. Let's use 'page'.
+        // Server fetch includes the ISR option
         const res = await fetch(
-            `${API_URL}/posts?_embed&categories=${categoryId}&per_page=${POSTS_PER_PAGE}&page=${page}`, 
+            `${API_URL}/posts?_embed&categories=${categoryId}&per_page=${POSTS_PER_PAGE}&page=1`, 
             {
-                // Use ISR to keep the listing relatively fresh
-                // Only for the initial load done by the server component.
                 next: { revalidate: 120 }, 
             }
         );
@@ -63,7 +52,6 @@ export async function fetchPosts(categoryId: number, page: number = 1): Promise<
             return [];
         }
         
-        // 🎯 Note: We can't easily get the X-WP-TotalPages header here in the server component for the client component to use for limiting the button, so we'll rely on checking if the returned array is less than POSTS_PER_PAGE in the client component.
         return res.json() as Promise<WPPost[]>; 
         
     } catch (error) {
@@ -84,8 +72,7 @@ export default async function CategoryPage({ params }: { params: { category: str
     }
 
     // Step 2: Get the *first* page of posts using the category ID
-    // 🎯 Use page 1 for initial load
-    const initialPosts = await fetchPosts(category.id, 1);
+    const initialPosts = await getInitialPosts(category.id); // 🎯 Use the dedicated server function
 
     return (
         <section>
@@ -94,24 +81,19 @@ export default async function CategoryPage({ params }: { params: { category: str
                 {parse(category.name)}
             </h1>
             
-            {initialPosts.length === 0 && category.count === 0 ? (
-                <p className="text-lg text-gray-600">
-                    इस कैटेगरी (**{parse(category.name)}**) में फ़िलहाल कोई पोस्ट उपलब्ध नहीं है।
-                </p>
-            ) : (
-                // 🎯 Pass initial posts, category ID, and total count to the client component
-                <LoadMorePosts 
-                    initialPosts={initialPosts}
-                    categoryId={category.id}
-                    totalPostCount={category.count} // Use category count to determine if more pages exist
-                    categoryName={parse(category.name)} // Pass name for display in case of no posts
-                />
-            )}
+            {/* The Client Component handles rendering and "Load More" logic */}
+            <LoadMorePosts 
+                initialPosts={initialPosts}
+                categoryId={category.id}
+                totalPostCount={category.count} 
+                categoryName={parse(category.name)} 
+                fetcher={fetchPostsFromApi} // 🎯 Pass the safe utility function
+            />
         </section>
     );
 }
 
-// Optional: Generate static paths for popular categories (SSG)
+// Optional: Generate static paths for popular categories (SSG) (No Change)
 export async function generateStaticParams() {
     try {
         const res = await fetch(`${API_URL}/categories?per_page=10`);

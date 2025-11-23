@@ -4,6 +4,7 @@ import Image from 'next/image';
 
 // Define the categories (copied from layout.tsx)
 const categories = [
+    { slug: '/', name: 'होम' },
     { slug: 'entertainment', name: 'मनोरंजन' },
     { slug: 'latest', name: 'तजा खबर' },
     { slug: 'bihar', name: 'बिहार' },
