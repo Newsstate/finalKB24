@@ -211,6 +211,35 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </div>
         </main>
 
+{/* 🎯 START: FLOATING MOBILE AD (320x50) 🎯 */}
+<div 
+          // Hide on screen sizes >= sm (typically tablet/desktop), ensuring it's mobile only
+          className="sm:hidden 
+                     fixed bottom-0 left-0 w-full z-50 
+                     bg-gray-900 shadow-2xl p-0.5"
+        >
+            <div className="flex justify-center items-center w-full h-[50px]">
+                
+                {/* Note: The AdSense script load is already included above in the layout. 
+                  We only need the ins tag and the push command here. 
+                */}
+                <ins className="adsbygoogle"
+                     style={{ display: 'inline-block', width: '320px', height: '50px' }}
+                     data-ad-client={ADSENSE_PUB_ID}
+                     data-ad-slot="8246126457"></ins>
+                
+                {/* Push Ad Script */}
+                <Script 
+                    id="adsense-push-mobile-sticky" 
+                    strategy="afterInteractive"
+                >
+                    {`
+                      (window.adsbygoogle = window.adsbygoogle || []).push({});
+                    `}
+                </Script>
+            </div>
+        </div>
+        {/* 🎯 END: FLOATING MOBILE AD 🎯 */}
         <Footer />
       </body>
     </html>
