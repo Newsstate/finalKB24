@@ -6,27 +6,30 @@ import Link from 'next/link';
 import { parseISO, format } from 'date-fns';
 import { hi } from 'date-fns/locale';
 import Image from 'next/image'; 
+import Script from 'next/script'; // 👈 IMPORT THE SCRIPT COMPONENT
 
 const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
+const GA_TRACKING_ID = 'G-TKW1SEK3SH'; 
+const ADSENSE_PUB_ID = 'ca-pub-6466761575770733'; 
 
 // ✅ CONFIGURATION FOR SIDEBAR CATEGORY
-const SIDEBAR_CATEGORY_ID = 1; // 👈 CHANGE THIS TO YOUR DESIRED CATEGORY ID
-const SIDEBAR_CATEGORY_TITLE = 'ट्रेंडिंग न्यूज़'; // 👈 Update this title
+const SIDEBAR_CATEGORY_ID = 1; 
+const SIDEBAR_CATEGORY_TITLE = 'ट्रेंडिंग न्यूज़'; 
 
 export const metadata = {
   title: 'Khabar24Live - Next.js',
   description: 'Recreation of khabar24live.com using Next.js and WordPress API',
 };
 
-// --- TYPE DEFINITIONS ---
+// --- TYPE DEFINITIONS (No changes) ---
 interface CategoryPost {
+// ... 
   id: number;
   slug: string;
   date: string;
   title: { rendered: string };
   categories: number[];
   _embedded?: {
-    // Array type is safer for featured media
     'wp:featuredmedia'?: Array<{ source_url: string; alt_text: string }>; 
   };
 }
@@ -36,8 +39,9 @@ interface Category {
   slug: string;
 }
 
-// --- DATA FETCHING UTILITIES ---
+// --- DATA FETCHING UTILITIES (No changes) ---
 async function getCategoryMap(): Promise<Map<number, string>> {
+// ... (getCategoryMap logic remains the same) ...
   const categoryMap = new Map<number, string>();
   try {
     const res = await fetch(`${API_URL}/categories?_fields=id,slug&per_page=100`);
@@ -50,8 +54,8 @@ async function getCategoryMap(): Promise<Map<number, string>> {
   return categoryMap;
 }
 
-// 🎯 UPDATED FETCH FUNCTION TO FILTER BY CATEGORY
 async function getCategorySidebarPosts(categoryId: number): Promise<CategoryPost[]> {
+// ... (getCategorySidebarPosts logic remains the same) ...
   try {
     const res = await fetch(
       `${API_URL}/posts?categories=${categoryId}&_embed&_fields=id,slug,title,categories,date,_embedded&per_page=5&orderby=date`,
@@ -65,8 +69,9 @@ async function getCategorySidebarPosts(categoryId: number): Promise<CategoryPost
   }
 }
 
-// --- SIDEBAR CATEGORY POSTS COMPONENT (THUMBNAILS REMOVED) ---
+// --- SIDEBAR CATEGORY POSTS COMPONENT (No changes) ---
 const CategoryPostsSidebar: React.FC<{ posts: CategoryPost[], categoryMap: Map<number, string> }> = ({ posts, categoryMap }) => {
+// ... (CategoryPostsSidebar component logic remains the same) ...
   if (posts.length === 0) {
     return (
       <div className="bg-gray-100 p-3 rounded h-64 flex items-center justify-center text-gray-500">
@@ -88,16 +93,9 @@ const CategoryPostsSidebar: React.FC<{ posts: CategoryPost[], categoryMap: Map<n
           const categorySlug = primaryCatId ? categoryMap.get(primaryCatId) : 'uncategorized';
           const postPath = `/${categorySlug}/${post.slug}-${post.id}`;
           
-          // ❌ REMOVED: Image logic (featuredMedia, imageUrl, imageAlt) is no longer used here.
-
           return (
             <li key={post.id} className="pb-4 border-b border-gray-200 last:border-b-0 last:pb-0">
-              {/* 🎯 CHANGED: Reverted class from "flex gap-3" to "block" to remove image space */}
               <Link href={postPath} className="block group hover:text-red-600 transition">
-                
-                {/* ❌ REMOVED: Image thumbnail div and Image component */}
-
-                {/* 🎯 TEXT CONTENT */}
                 <div className="flex-1">
                   <h3 className="text-sm font-semibold text-gray-800 group-hover:text-red-700 leading-tight line-clamp-3">
                     {title}
@@ -124,6 +122,53 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="hi">
+      
+      {/* 🛑 DNS Prefetching/Preconnect Links (Translated from your tags) */}
+      <link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
+      <link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
+      <link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
+      <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossOrigin="anonymous" />
+      <link rel="preconnect" href="https://googleads.g.doubleclick.net" crossOrigin="anonymous" />
+      <link rel="preconnect" href="https://tpc.googlesyndication.com" crossOrigin="anonymous" />
+      
+      {/* 🛑 Google Tag (gtag.js) Script Implementation (EXISTING) */}
+      <Script 
+        strategy="afterInteractive" 
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+      />
+      <Script
+        id="google-analytics-config" 
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_TRACKING_ID}');
+          `,
+        }}
+      />
+
+      {/* 🛑 AdSense Loader Script (EXISTING) */}
+      <Script 
+        async 
+        strategy="afterInteractive" 
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUB_ID}`}
+        crossOrigin="anonymous"
+      />
+      
+      {/* 🛑 AMP Custom Element Scripts (Translated from your tags) */}
+      <Script 
+        strategy="lazyOnload" // Load these only when the browser is idle
+        src="https://cdn.ampproject.org/v0/amp-lightbox-0.1.js" 
+        key="amp-lightbox" 
+      />
+      <Script 
+        strategy="lazyOnload" 
+        src="https://cdn.ampproject.org/v0/amp-ad-0.1.js" 
+        key="amp-ad" 
+      />
+      
       <body>
         <Header />
 

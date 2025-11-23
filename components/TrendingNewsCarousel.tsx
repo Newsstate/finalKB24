@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
-const BASE_URL = 'https://www.khabar24live.com'; // Assuming this is defined
+const BASE_URL = 'https://www.khabar24live.com';
 
 interface RelatedPostWithMedia {
     id: number;
@@ -24,27 +24,20 @@ interface TrendingNewsCarouselProps {
 }
 
 /**
- * Fetches up to 10 random posts from the SAME category (excluding current), 
- * published within the last 5 days, including featured media.
+ * Fetches up to 10 random posts from ANY category or date (excluding current), 
+ * including featured media. (Least restrictive query for guaranteed visibility)
  */
 async function getTrendingPostsWithMedia(currentPostId: number, categoryIds: number[]): Promise<RelatedPostWithMedia[]> {
   
-  const fiveDaysAgo = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString().split('.')[0];
-  const afterDateParam = encodeURIComponent(fiveDaysAgo);
-
-  if (!categoryIds || categoryIds.length === 0) {
-      return [];
-  }
-
   try {
+    // URL is now the least restrictive possible (removed categories and date filters):
     const apiUrl = 
-      `${API_URL}/posts?categories=${categoryIds.join(',')}` +
-      `&exclude=${currentPostId}` +
-      `&per_page=10` + // Fetch a few more to ensure enough for carousel
-      `&orderby=rand` +
-      `&_fields=id,slug,title,categories,_links` + // Need _links to get _embedded.wp:featuredmedia
-      `&_embed=wp:featuredmedia` + // Explicitly request embedded media
-      `&after=${afterDateParam}`; 
+      `${API_URL}/posts?` + 
+      `exclude=${currentPostId}` +
+      `&per_page=10` + 
+      `&orderby=rand` + 
+      `&_fields=id,slug,title,categories,_links` + 
+      `&_embed=wp:featuredmedia`; 
 
     const res = await fetch(
       apiUrl,
@@ -69,7 +62,6 @@ export async function TrendingNewsCarousel({ currentPostId, categoryIds, categor
     if (posts.length === 0) return null;
 
     // A simple, scrollable container to mimic a carousel
-    // For a full-fledged carousel with navigation buttons, consider Swiper.js or similar
     return (
         <div className="my-8">
             {/* Header section (Dark blue background, white text) */}
@@ -81,17 +73,18 @@ export async function TrendingNewsCarousel({ currentPostId, categoryIds, categor
             <div className="relative bg-white p-4 overflow-hidden rounded-b-lg shadow-lg">
                 <div 
                     id="carousel-container" 
-                    className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 no-scrollbar space-x-4" // no-scrollbar hides scrollbar
-                    // Added a min-width for the items to ensure they take up space
+                    // Crucial: flex, overflow-x-auto, and no-scrollbar (must be defined in globals.css)
+                    className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 no-scrollbar space-x-4" 
                 >
                     {posts.map(post => {
                         const titleText = post.title.rendered.replace(/<[^>]*>?/gm, '');
+                        // NOTE: This link path assumes the categorySlug is correct for the random post
                         const postPath = `/${categorySlug}/${post.slug}-${post.id}`; 
                         const imageUrl = post._embedded['wp:featuredmedia']?.[0]?.source_url || `${BASE_URL}/placeholder.jpg`;
                         const imageAlt = post._embedded['wp:featuredmedia']?.[0]?.alt_text || titleText;
 
                         return (
-                            <div key={post.id} className="flex-shrink-0 w-64 md:w-80 lg:w-96 snap-start"> {/* Fixed width for items */}
+                            <div key={post.id} className="flex-shrink-0 w-64 md:w-80 lg:w-96 snap-start">
                                 <Link href={postPath} className="block border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200">
                                     <div className="relative w-full h-40">
                                         <Image
@@ -101,7 +94,7 @@ export async function TrendingNewsCarousel({ currentPostId, categoryIds, categor
                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                             style={{ objectFit: "cover" }}
                                             className="transition-transform duration-300 hover:scale-105"
-                                            unoptimized // Consider optimizing this in production
+                                            unoptimized
                                         />
                                     </div>
                                     <div className="p-3">

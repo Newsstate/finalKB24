@@ -9,8 +9,7 @@ import { Metadata } from 'next';
 import React from 'react';
 import parse from 'html-react-parser';
 
-// 1. Import the new components
-// ✅ FIX: Corrected typo from TrendingNewsCarouse to TrendingNewsCarousel
+// 1. Import the components
 import { TrendingNewsCarousel } from '@/components/TrendingNewsCarousel';
 import { RichTextRenderer } from '@/components/RichTextRenderer';
 
@@ -35,7 +34,7 @@ interface WPPost {
 }
 
 // ===========================================
-// 🔥 HELPER FUNCTIONS (Defined before use)
+// 🔥 HELPER FUNCTIONS 
 // ===========================================
 
 // 2. DEFINE extractSlug
@@ -135,7 +134,7 @@ function getBreadcrumbSchema(categoryName: string, categorySlug: string, article
 // SEO + Metadata Block
 // =========================
 export async function generateMetadata({ params }: { params: { slugAndId: string, category: string } }): Promise<Metadata> {
-  // Functions extractSlug and getPost are now defined above
+  
   if (!params.slugAndId) {
     return { title: 'Not Found | Missing Slug' };
   }
@@ -204,7 +203,6 @@ export default async function PostPage({ params }: { params: { category: string;
     params.category.slice(1).replace(/-/g, " ");
   const postTitleText = titleText; 
 
-  // Functions getNewsArticleSchema and getBreadcrumbSchema are now defined above
   const newsArticleSchema = getNewsArticleSchema(post, articleUrl, titleText, descriptionText);
   const breadcrumbSchema = getBreadcrumbSchema(categoryName, categorySlug, postTitleText, articleUrl);
 
@@ -322,7 +320,6 @@ export default async function PostPage({ params }: { params: { category: string;
             htmlContent={content}
             insertAfterParagraph={3} // Insert after the 3rd paragraph
             insertionComponent={
-              // ✅ FIX: Using the correct, new component for the carousel
               <TrendingNewsCarousel 
                 currentPostId={post.id} 
                 categoryIds={post.categories || []} 
@@ -332,7 +329,6 @@ export default async function PostPage({ params }: { params: { category: string;
           />
         </div>
       </article>
-      {/* The commented out carousel placement is removed as it's now inserted in the content */}
     </>
   );
 }
