@@ -1,34 +1,25 @@
 // app/[category]/page.tsx
-
-import { ArticleCard, WPPost } from '@/components/ArticleCard';
-import LoadMorePosts from '@/components/LoadMorePosts'; 
+import { ArticleCard, WPPost } from '@/components/ArticleCard'; // ✅ IMPORT WPPost
 import { notFound } from 'next/navigation';
 import parse from 'html-react-parser';
-import { fetchPosts as fetchPostsFromApi } from '/lib/api.ts'; // 🎯 FIX 1: Import fetcher from utility
 
 const API_URL = 'https://www.newsstate24.com/wp-json/wp/v2';
-const POSTS_PER_PAGE = 10; 
 
 // --- TYPE DEFINITIONS ---
-interface CategorySlug {
+// Interface for category data fetched for static path generation
+interface CategorySlug { // 🎯 ADDED TYPE FOR STATIC PARAMS
   slug: string;
 }
-interface CategoryData { 
-    id: number;
-    name: string;
-    slug: string;
-    count: number; 
-}
 
-
-// 1. Function to find the Category ID by its slug (No Change)
-async function getCategoryData(slug: string): Promise<CategoryData | null> {
+// 1. Function to find the Category ID by its slug
+async function getCategoryData(slug: string) {
     try {
         const res = await fetch(`${API_URL}/categories?slug=${slug}`);
         if (!res.ok) {
             return null;
         }
-        const categories: CategoryData[] = await res.json();
+        const categories = await res.json();
+        // Return the first category object found
         return categories.length > 0 ? categories[0] : null;
 
     } catch (error) {
@@ -37,22 +28,20 @@ async function getCategoryData(slug: string): Promise<CategoryData | null> {
     }
 }
 
-// 2. Function for initial server fetch (Replaces problematic export fetchPosts)
-async function getInitialPosts(categoryId: number): Promise<WPPost[]> {
+// 2. Function to fetch posts belonging to a specific Category ID
+// 🎯 Added return type annotation for clarity and safety
+async function getCategoryPosts(categoryId: number): Promise<WPPost[]> {
     try {
-        // Server fetch includes the ISR option
-        const res = await fetch(
-            `${API_URL}/posts?_embed&categories=${categoryId}&per_page=${POSTS_PER_PAGE}&page=1`, 
-            {
-                next: { revalidate: 120 }, 
-            }
-        );
+        // Fetch posts filtered by category ID, embedding details
+        const res = await fetch(`${API_URL}/posts?_embed&categories=${categoryId}&per_page=10`, {
+            // Use ISR to keep the listing relatively fresh
+            next: { revalidate: 120 }, 
+        });
 
         if (!res.ok) {
             return [];
         }
-        
-        return res.json() as Promise<WPPost[]>; 
+        return res.json() as Promise<WPPost[]>; // Cast to the correct type
         
     } catch (error) {
         console.error('Error fetching category posts:', error);
@@ -64,50 +53,57 @@ async function getInitialPosts(categoryId: number): Promise<WPPost[]> {
 export default async function CategoryPage({ params }: { params: { category: string } }) {
     const categorySlug = params.category;
 
-    // Step 1: Get category details (ID, Name, Count)
+    // Step 1: Get category details (ID, Name)
     const category = await getCategoryData(categorySlug);
 
     if (!category) {
+        // If the category slug doesn't exist, show Next.js 404 page
         notFound();
     }
 
-    // Step 2: Get the *first* page of posts using the category ID
-    const initialPosts = await getInitialPosts(category.id);
+    // Step 2: Get posts using the category ID
+    const posts = await getCategoryPosts(category.id);
 
     return (
         <section>
             {/* Category Name as Main Heading */}
             <h1 className="text-4xl font-extrabold mb-6 border-b pb-2 text-red-700">
+                {/* Render category name safely */}
                 {parse(category.name)}
             </h1>
             
-            {/* 🎯 Updated check to align with logic: only render LoadMorePosts if there's potential content */}
-            {initialPosts.length === 0 && category.count === 0 ? (
+            {posts.length === 0 ? (
                 <p className="text-lg text-gray-600">
                     इस कैटेगरी (**{parse(category.name)}**) में फ़िलहाल कोई पोस्ट उपलब्ध नहीं है।
                 </p>
             ) : (
-                <LoadMorePosts 
-                    initialPosts={initialPosts}
-                    categoryId={category.id}
-                    totalPostCount={category.count}
-                    categoryName={parse(category.name)}
-                    fetcher={fetchPostsFromApi} // 🎯 FIX 1: Pass the safe utility function
-                />
+                <div className="space-y-6">
+                {posts.map((post: WPPost) => ( 
+                    // Reuse the ArticleCard component for consistent listing
+                    <ArticleCard 
+                        key={post.id} 
+                        post={post} 
+                        variant="default" // FIX: ADDED REQUIRED VARIANT PROP
+                    />
+                ))}
+            </div>
             )}
         </section>
     );
 }
 
-// Optional: Generate static paths for popular categories (SSG) (No Change)
+// Optional: Generate static paths for popular categories (SSG)
 export async function generateStaticParams() {
+    // This fetches a list of categories to pre-render the category pages at build time.
     try {
         const res = await fetch(`${API_URL}/categories?per_page=10`);
         
+        // 🎯 FIX: Explicitly type the fetched array as CategorySlug[]
         const categories: CategorySlug[] = await res.json();
         
         return categories.map((category) => ({
-            category: category.slug,
+            // 'category' is now correctly typed
+            category: category.slug, // The dynamic part of the route
         }));
     } catch (error) {
         console.warn('Could not generate static category paths. Pages will be generated on demand.');
