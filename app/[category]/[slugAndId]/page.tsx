@@ -1,12 +1,17 @@
 // app/[category]/[slugAndId]/page.tsx
 
 import Image from 'next/image';
-import parse from 'html-react-parser';
 import { parseISO, format } from 'date-fns';
 import { hi } from 'date-fns/locale';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import React from 'react';
+import parse from 'html-react-parser';
+
+// 1. Import the new components
+import { RelatedArticlesBlock } from '@/components/RelatedArticlesBlock';
+import { RichTextRenderer } from '@/components/RichTextRenderer';
 
 const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
 const BASE_URL = 'https://www.khabar24live.com';
@@ -21,21 +26,28 @@ interface WPPost {
   title: { rendered: string };
   excerpt: { rendered: string };
   content: { rendered: string };
+  categories: number[];
   _embedded: {
     author?: Array<{ name: string; avatar_urls?: { [key: number]: string } }>;
     'wp:featuredmedia'?: Array<{ source_url: string; alt_text: string; width: number; height: number; }>;
   };
 }
 
-// Extract only slug from "title-53211"
+// ===========================================
+// 🔥 HELPER FUNCTIONS (Defined before use)
+// ===========================================
+
+// 2. DEFINE extractSlug
 const extractSlug = (slugAndId: string) => {
+  if (!slugAndId) return '';
   const parts = slugAndId.split('-');
   return parts.slice(0, -1).join('-');
 };
 
+// 3. DEFINE getPost
 async function getPost(slug: string): Promise<WPPost | null> {
   try {
-    const res = await fetch(`${API_URL}/posts?_embed&slug=${slug}`, {
+    const res = await fetch(`${API_URL}/posts?_embed&slug=${slug}`, { 
       next: { revalidate: 1800 },
     });
 
@@ -49,9 +61,7 @@ async function getPost(slug: string): Promise<WPPost | null> {
   }
 }
 
-// ===================================
-// 🔥 JSON-LD SCHEMA GENERATION HELPER (NewsArticle)
-// ===================================
+// 4. DEFINE getNewsArticleSchema
 function getNewsArticleSchema(post: WPPost, articleUrl: string, titleText: string, descriptionText: string) {
     const featuredMedia = post._embedded['wp:featuredmedia']?.[0];
     const author = post._embedded.author?.[0];
@@ -75,8 +85,6 @@ function getNewsArticleSchema(post: WPPost, articleUrl: string, titleText: strin
         "author": {
             "@type": "Person",
             "name": author?.name || "Khabar24Live Desk",
-            // Recommended addition for SEO: Link to the author's profile page if available
-            // "url": `${BASE_URL}/author/${author?.name.toLowerCase().replace(/\s/g, '-') || 'khabar24livedesk'}` 
         },
         "publisher": {
             "@type": "Organization",
@@ -93,12 +101,7 @@ function getNewsArticleSchema(post: WPPost, articleUrl: string, titleText: strin
     });
 }
 
-// ===================================
-// 🔥 JSON-LD SCHEMA GENERATION HELPER (BreadcrumbList)
-// ===================================
-/**
- * Generates the BreadcrumbList JSON-LD schema string.
- */
+// 5. DEFINE getBreadcrumbSchema
 function getBreadcrumbSchema(categoryName: string, categorySlug: string, articleTitle: string, articleUrl: string) {
     return JSON.stringify({
         "@context": "https://schema.org",
@@ -107,7 +110,7 @@ function getBreadcrumbSchema(categoryName: string, categorySlug: string, article
             {
                 "@type": "ListItem",
                 "position": 1,
-                "name": "होम", // Home
+                "name": "होम",
                 "item": BASE_URL + "/"
             },
             {
@@ -128,9 +131,14 @@ function getBreadcrumbSchema(categoryName: string, categorySlug: string, article
 
 
 // =========================
-// SEO + Metadata Block (Remains the same)
+// SEO + Metadata Block
 // =========================
 export async function generateMetadata({ params }: { params: { slugAndId: string, category: string } }): Promise<Metadata> {
+  // Functions extractSlug and getPost are now defined above
+  if (!params.slugAndId) {
+    return { title: 'Not Found | Missing Slug' };
+  }
+    
   const postSlug = extractSlug(params.slugAndId);
   const post = await getPost(postSlug);
   
@@ -145,11 +153,7 @@ export async function generateMetadata({ params }: { params: { slugAndId: string
   return {
     title: title,
     description: description,
-
-    alternates: {
-      canonical: articlePath,
-    },
-
+    alternates: { canonical: articlePath },
     openGraph: {
       title: title,
       description: description,
@@ -164,7 +168,6 @@ export async function generateMetadata({ params }: { params: { slugAndId: string
       publishedTime: post.date,
       modifiedTime: post.modified_gmt || post.date,
     },
-
     robots: {
       index: true,
       follow: true,
@@ -178,7 +181,7 @@ export async function generateMetadata({ params }: { params: { slugAndId: string
 }
 
 // =========================
-// 🔥 Main Article Page
+// Main Article Page
 // =========================
 export default async function PostPage({ params }: { params: { category: string; slugAndId: string } }) {
   const postSlug = extractSlug(params.slugAndId);
@@ -190,7 +193,7 @@ export default async function PostPage({ params }: { params: { category: string;
   const content = post.content.rendered;
   const date = post.date;
   
-  // Clean and prepare variables for both component and schema
+  // Prepare variables for component and schema
   const titleText = title.replace(/<[^>]*>?/gm, '');
   const descriptionText = post.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...';
   const articleUrl = `${BASE_URL}/${params.category}/${params.slugAndId}`;
@@ -198,16 +201,14 @@ export default async function PostPage({ params }: { params: { category: string;
   const categoryName =
     params.category.charAt(0).toUpperCase() +
     params.category.slice(1).replace(/-/g, " ");
-  const postTitleText = titleText; // Use the stripped version
+  const postTitleText = titleText; 
 
-  // Generate the JSON-LD schemas
+  // Functions getNewsArticleSchema and getBreadcrumbSchema are now defined above
   const newsArticleSchema = getNewsArticleSchema(post, articleUrl, titleText, descriptionText);
   const breadcrumbSchema = getBreadcrumbSchema(categoryName, categorySlug, postTitleText, articleUrl);
 
-  // Use optional chaining for safer access
   const authorName = post._embedded.author?.[0]?.name || "Khabar24Live Desk";
-  const authorAvatarUrl =
-    post._embedded.author?.[0]?.avatar_urls?.[96] || "/default-avatar.png";
+  const authorAvatarUrl = post._embedded.author?.[0]?.avatar_urls?.[96] || "/default-avatar.png";
 
   const featuredMedia = post._embedded["wp:featuredmedia"]?.[0];
   const imageUrl = featuredMedia?.source_url || "/placeholder-large.jpg";
@@ -217,16 +218,13 @@ export default async function PostPage({ params }: { params: { category: string;
     locale: hi,
   });
 
-
   return (
     <>
-      {/* 1. NEWSARTICLE JSON-LD SCHEMA */}
+      {/* JSON-LD Schemas */}
       <script 
         type="application/ld+json" 
         dangerouslySetInnerHTML={{ __html: newsArticleSchema }}
       />
-      
-      {/* 2. 🔥 BREADCRUMBLIST JSON-LD SCHEMA */}
       <script 
         type="application/ld+json" 
         dangerouslySetInnerHTML={{ __html: breadcrumbSchema }}
@@ -234,13 +232,12 @@ export default async function PostPage({ params }: { params: { category: string;
       
       <article className="bg-white p-2 rounded-lg shadow-lg text-black">
         
-        {/* 🎯 BREADCRUMB NAVIGATION (Mobile Responsive) */}
+        {/* BREADCRUMB NAVIGATION */}
         <nav 
           className="flex text-sm text-gray-500 mb-2 overflow-x-auto whitespace-nowrap" 
           aria-label="Breadcrumb"
         >
           <ol className="inline-flex items-center space-x-1 md:space-x-3">
-            {/* 1. Home Link */}
             <li className="inline-flex items-center">
               <Link 
                 href="/" 
@@ -249,8 +246,6 @@ export default async function PostPage({ params }: { params: { category: string;
                 होम
               </Link>
             </li>
-            
-            {/* 2. Category Link */}
             <li>
               <div className="flex items-center">
                 <svg className="w-3 h-3 text-gray-400 mx-1 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
@@ -264,14 +259,11 @@ export default async function PostPage({ params }: { params: { category: string;
                 </Link>
               </div>
             </li>
-            
-            {/* 3. Current Article (Title) */}
             <li aria-current="page">
               <div className="flex items-center">
                 <svg className="w-3 h-3 text-gray-400 mx-1 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
                 </svg>
-                {/* Truncated title for mobile views */}
                 <span className="text-gray-900 line-clamp-1 max-w-xs"> 
                   {postTitleText}
                 </span>
@@ -323,9 +315,19 @@ export default async function PostPage({ params }: { params: { category: string;
           />
         </div>
 
-        {/* Main Content */}
+        {/* Main Content using RichTextRenderer */}
         <div className="prose max-w-none text-lg leading-relaxed text-black custom-article-body">
-          {parse(content.replace(/<\/p>/g, "</p><br/>"))}
+          <RichTextRenderer 
+            htmlContent={content}
+            insertAfterParagraph={3} // Insert after the 3rd paragraph
+            insertionComponent={
+              <RelatedArticlesBlock 
+                currentPostId={post.id} 
+                categoryIds={post.categories || []} 
+                categorySlug={categorySlug} 
+              />
+            }
+          />
         </div>
       </article>
     </>
