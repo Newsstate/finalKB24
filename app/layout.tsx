@@ -215,8 +215,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 <div 
           // Hide on screen sizes >= sm (typically tablet/desktop), ensuring it's mobile only
           className="sm:hidden 
-                     fixed bottom-0 left-0 w-full z-50 
-                     bg-gray-900 shadow-2xl p-0.5"
+             fixed bottom-0 left-0 w-full z-50 
+             bg-white shadow-2xl p-0.5"
         >
             <div className="flex justify-center items-center w-full h-[50px]">
                 
