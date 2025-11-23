@@ -63,3 +63,32 @@ body {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* --- AdSense Specific Styles for AMP/Non-AMP Switching --- */
+
+/* Wrapper centers content horizontally & vertically if needed */
+.adsense-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  text-align: center;
+  /* Add padding to the container to ensure the ad is visible on mobile if needed */
+  padding: 10px 0;
+}
+
+/* Hide AMP ads on non-AMP pages and vice versa */
+.show-for-amp { 
+  display: none; 
+}
+.hide-for-amp { 
+  display: block; 
+}
+
+/* AMP adds [amp] attribute automatically, overriding the default display */
+[amp] .show-for-amp { 
+  display: block; 
+}
+[amp] .hide-for-amp { 
+  display: none; 
+}

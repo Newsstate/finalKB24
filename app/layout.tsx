@@ -8,6 +8,7 @@ import { hi } from 'date-fns/locale';
 import Image from 'next/image'; 
 import Script from 'next/script'; // 👈 IMPORT THE SCRIPT COMPONENT
 
+// --- CONFIGURATION CONSTANTS ---
 const API_URL = 'https://newsstate24.com/wp-json/wp/v2';
 const GA_TRACKING_ID = 'G-TKW1SEK3SH'; 
 const ADSENSE_PUB_ID = 'ca-pub-6466761575770733'; 
@@ -15,15 +16,15 @@ const ADSENSE_PUB_ID = 'ca-pub-6466761575770733';
 // ✅ CONFIGURATION FOR SIDEBAR CATEGORY
 const SIDEBAR_CATEGORY_ID = 1; 
 const SIDEBAR_CATEGORY_TITLE = 'ट्रेंडिंग न्यूज़'; 
+// -------------------------------
 
 export const metadata = {
-  title: 'Khabar24Live - Next.js',
-  description: 'Recreation of khabar24live.com using Next.js and WordPress API',
+  title: 'खबर 24 लाइव (khabar24live) हिंदी न्यूज़ - ताज़ा हिंदी खबरें, ब्रेकिंग न्यूज़ 24x7',
+  description: 'khabar24live Hindi (खबर 24 लाइव) पर पढ़ें ताज़ा हिंदी खबरें, ब्रेकिंग न्यूज़, देश-दुनिया, राजनीति, खेल, मनोरंजन और अन्य बड़ी खबरें सबसे पहले।',
 };
 
-// --- TYPE DEFINITIONS (No changes) ---
+// --- TYPE DEFINITIONS ---
 interface CategoryPost {
-// ... 
   id: number;
   slug: string;
   date: string;
@@ -39,9 +40,8 @@ interface Category {
   slug: string;
 }
 
-// --- DATA FETCHING UTILITIES (No changes) ---
+// --- DATA FETCHING UTILITIES ---
 async function getCategoryMap(): Promise<Map<number, string>> {
-// ... (getCategoryMap logic remains the same) ...
   const categoryMap = new Map<number, string>();
   try {
     const res = await fetch(`${API_URL}/categories?_fields=id,slug&per_page=100`);
@@ -55,8 +55,8 @@ async function getCategoryMap(): Promise<Map<number, string>> {
 }
 
 async function getCategorySidebarPosts(categoryId: number): Promise<CategoryPost[]> {
-// ... (getCategorySidebarPosts logic remains the same) ...
   try {
+    // Note: The revalidate tag is for Incremental Static Regeneration (ISR) 
     const res = await fetch(
       `${API_URL}/posts?categories=${categoryId}&_embed&_fields=id,slug,title,categories,date,_embedded&per_page=5&orderby=date`,
       { next: { revalidate: 600 } }
@@ -69,9 +69,8 @@ async function getCategorySidebarPosts(categoryId: number): Promise<CategoryPost
   }
 }
 
-// --- SIDEBAR CATEGORY POSTS COMPONENT (No changes) ---
+// --- SIDEBAR CATEGORY POSTS COMPONENT ---
 const CategoryPostsSidebar: React.FC<{ posts: CategoryPost[], categoryMap: Map<number, string> }> = ({ posts, categoryMap }) => {
-// ... (CategoryPostsSidebar component logic remains the same) ...
   if (posts.length === 0) {
     return (
       <div className="bg-gray-100 p-3 rounded h-64 flex items-center justify-center text-gray-500">
@@ -123,7 +122,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="hi">
       
-      {/* 🛑 DNS Prefetching/Preconnect Links (Translated from your tags) */}
+      {/* 🛑 DNS Prefetching/Preconnect Links */}
       <link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
       <link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
       <link rel="dns-prefetch" href="//tpc.googlesyndication.com" />
@@ -131,7 +130,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <link rel="preconnect" href="https://googleads.g.doubleclick.net" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://tpc.googlesyndication.com" crossOrigin="anonymous" />
       
-      {/* 🛑 Google Tag (gtag.js) Script Implementation (EXISTING) */}
+      {/* 🛑 Google Tag (gtag.js) Script Implementation */}
       <Script 
         strategy="afterInteractive" 
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
@@ -149,7 +148,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         }}
       />
 
-      {/* 🛑 AdSense Loader Script (EXISTING) */}
+      {/* 🛑 AdSense Loader Script (LOADS MAIN ADSBYGOOGLE.JS) */}
       <Script 
         async 
         strategy="afterInteractive" 
@@ -157,12 +156,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         crossOrigin="anonymous"
       />
       
-      {/* 🛑 AMP Custom Element Scripts (Translated from your tags) */}
-      <Script 
-        strategy="lazyOnload" // Load these only when the browser is idle
-        src="https://cdn.ampproject.org/v0/amp-lightbox-0.1.js" 
-        key="amp-lightbox" 
-      />
+      {/* 🛑 AMP Custom Element Scripts (Required for AMP-AD) */}
       <Script 
         strategy="lazyOnload" 
         src="https://cdn.ampproject.org/v0/amp-ad-0.1.js" 
@@ -184,7 +178,28 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             {/* Sidebar */}
             <aside className="w-full lg:w-1/4 lg:sticky lg:top-24 h-fit space-y-8">
               
-              {/* 🎯 Category Posts Sidebar */}
+              {/* 🎯 START: AD CODE BLOCK (BEFORE TRENDING POSTS) */}
+              <div className="hide-for-amp adsense-wrapper">
+                <div className="adsense-container">
+                  {/* */}
+                  <ins className="adsbygoogle"
+                    style={{ display: 'inline-block', width: '300px', height: '250px' }}
+                    data-ad-client={ADSENSE_PUB_ID}
+                    data-ad-slot="1709198458"></ins>
+                  {/* Push ad to render */}
+                  <Script id="adsense-push-sidebar-before-trending" strategy="afterInteractive">
+                    {`
+                      (window.adsbygoogle = window.adsbygoogle || []).push({});
+                    `}
+                  </Script>
+                </div>
+              </div>
+
+            
+              {/* 🎯 END: AD CODE BLOCK */}
+
+
+              {/* 🎯 Category Posts Sidebar (Your 'Trending Posts' component) */}
               <CategoryPostsSidebar posts={sidebarPosts} categoryMap={categoryMap} /> 
 
             </aside>

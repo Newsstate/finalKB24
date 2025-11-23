@@ -45,7 +45,7 @@ export async function HeroSideListSection() {
         {/* 2. Title/Control Bar: Applied the requested margins as Tailwind classes */}
         <div className="flex flex-wrap justify-between items-center -mt-10 mb-10 gap-1"> 
             <h2 className="text-2xl font-extrabold text-gray-900 border-l-4 border-red-600 pl-3">
-                ताज़ा खबरें (Recent Posts)
+                ताज़ा खबरें
             </h2>
             <a href="#" className="text-red-600 text-sm font-semibold hover:underline">
                 View All →
