@@ -13,20 +13,16 @@ import { ArticleCard, WPPost } from "@/components/ArticleCard";
 const CITY_CATEGORIES: { name: string; categoryId: number }[] = [
   // Top Row (Highlight Cities)
   { name: "उत्तर प्रदेश", categoryId: 68 }, // Example ID
-  { name: "बिहार", categoryId: 67 }, // Example ID
-  { name: "दिल्ली", categoryId: 44 }, // Example ID
-  { name: "पंजाब", categoryId: 45 }, // Example ID
-  { name: "हरियाणा", categoryId: 46 }, // Example ID
+  { name: "बिहार", categoryId: 70 }, // Example ID
+  { name: "दिल्ली", categoryId: 88 }, // Example ID
+  { name: "मध्य प्रदेश", categoryId: 67 }, // Example ID
+  { name: "हरियाणा", categoryId: 89 }, // Example ID
   { name: "उत्तराखंड", categoryId: 80 }, // Example ID
   // ... rest of the cities from the image
-  { name: "झारखंड", categoryId: 47 },
-  { name: "हिमाचल प्रदेश", categoryId: 48 },
-  { name: "जम्मू-कश्मीर", categoryId: 49 },
-  { name: "पश्चिम बंगाल", categoryId: 50 },
-  { name: "ओडिशा", categoryId: 51 },
-  { name: "महाराष्ट्र", categoryId: 52 },
-  { name: "गुजरात", categoryId: 53 },
-  { name: "राजस्थान", categoryId: 54 },
+  { name: "झारखंड", categoryId: 87 },  
+  { name: "बिहार चुनाव 2025", categoryId: 461 },
+  { name: "छत्तीसगढ़ न्यूज़", categoryId: 69 },
+  { name: "राजस्थान", categoryId: 78 }, 
 ];
 
 const POSTS_PER_CITY = 9; // 3 rows of 3 articles

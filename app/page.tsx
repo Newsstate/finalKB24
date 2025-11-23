@@ -17,6 +17,11 @@ const FEATURED_CATEGORIES = [
 ];
 
 const KHEL_CATEGORY_ID = 79; 
+const ENT_CATEGORY_ID = 21;
+const TECH_CATEGORY_ID = 30; 
+const LIFESTYLE_CATEGORY_ID = 27;
+const ASTRO_CATEGORY_ID = 26;
+ 
 
 const POSTS_PER_SECTION = 8;
 
@@ -114,6 +119,8 @@ async function ThreeCategorySections() {
     
   ];
 
+
+
   const postsArray = await Promise.all(
     categories.map((cat) => getCategoryPosts(cat.id))
   );
@@ -127,6 +134,32 @@ async function ThreeCategorySections() {
   );
 }
 
+
+
+/** ✅ 3-CATEGORY GRID SECTION */
+async function ThreeCategorySections1() {
+  const categories = [
+    { id: 48, title: "राशिफल" },
+    { id: 90, title: "शेयर बाजार" },
+    { id: 50, title: "शिक्षा" },
+
+    
+  ];
+
+
+
+  const postsArray = await Promise.all(
+    categories.map((cat) => getCategoryPosts(cat.id))
+  );
+
+  return (
+    <section className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-10 mt-10">
+      {categories.map((cat, i) => (
+        <ColumnPostsSection key={cat.id} title={cat.title} posts={postsArray[i]} />
+      ))}
+    </section>
+  );
+}
 /** ✅ MAIN PAGE */
 export default async function HomePage() {
   
@@ -144,6 +177,10 @@ export default async function HomePage() {
   
   // 2. Fetch data for the dedicated 'खेल' section
   const khelPosts = await getCategoryPosts(KHEL_CATEGORY_ID); 
+  const ENTPosts = await getCategoryPosts(ENT_CATEGORY_ID); 
+  const TECHPosts = await getCategoryPosts(TECH_CATEGORY_ID); 
+  const LIFESTYLEPosts = await getCategoryPosts(LIFESTYLE_CATEGORY_ID); 
+  const ASTROPosts = await getCategoryPosts(ASTRO_CATEGORY_ID); 
 
   return (
     <main className="max-w-7xl mx-auto px-2 py-6">
@@ -164,10 +201,32 @@ export default async function HomePage() {
 
 
       {/* ✅ 3-Column Multi-Category Layout */}
-      <ThreeCategorySections />
+      <ThreeCategorySections/>
+
+      <WidePostsSection title="	धर्म" posts={ASTROPosts} />
+<hr className="my-10" />
+
          {/* ✅ Khel Featured Section */}
          <WidePostsSection title="खेल" posts={khelPosts} />
 
+<hr className="my-10" />
+
+
+
+
+ {/* ✅ 3-Column Multi-Category Layout */}
+
+         {/* ✅ ent Featured Section */}
+         <ThreeCategorySections1 />
+         <WidePostsSection title="मनोरंजन" posts={ENTPosts} />
+
+<hr className="my-10" />
+
+
+<WidePostsSection title="टेक" posts={TECHPosts} />
+<hr className="my-10" />
+
+<WidePostsSection title="लाइफस्टाइल" posts={LIFESTYLEPosts} />
 <hr className="my-10" />
     </main>
   );
