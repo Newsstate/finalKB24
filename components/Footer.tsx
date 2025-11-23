@@ -55,6 +55,11 @@ export function Footer() {
               <li><Link href="/contact-us" className="hover:text-white transition-colors">Contact Us</Link></li>
               <li><Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
               <li><Link href="/disclaimer" className="hover:text-white transition-colors">Disclaimer</Link></li>
+              <li><Link href="/content-policy" className="hover:text-white transition-colors">Content Policy</Link></li>
+              <li><Link href="/correction-policy" className="hover:text-white transition-colors">Correction Policy</Link></li>
+              <li><Link href="/diverse-staffing-policy" className="hover:text-white transition-colors">Diverse Staffing Policy</Link></li>
+              <li><Link href="/fact-check-policy" className="hover:text-white transition-colors">Fact Check Policy</Link></li>
+              <li><Link href="/terms-condition" className="hover:text-white transition-colors">Terms & Condition</Link></li>
               <li><Link href="/sitemap.xml" className="hover:text-white transition-colors">Sitemap</Link></li>
             </ul>
           </div>
