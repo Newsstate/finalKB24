@@ -10,7 +10,8 @@ import React from 'react';
 import parse from 'html-react-parser';
 
 // 1. Import the new components
-import { RelatedArticlesBlock } from '@/components/RelatedArticlesBlock';
+// ✅ FIX: Corrected typo from TrendingNewsCarouse to TrendingNewsCarousel
+import { TrendingNewsCarousel } from '@/components/TrendingNewsCarousel';
 import { RichTextRenderer } from '@/components/RichTextRenderer';
 
 const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
@@ -321,7 +322,8 @@ export default async function PostPage({ params }: { params: { category: string;
             htmlContent={content}
             insertAfterParagraph={3} // Insert after the 3rd paragraph
             insertionComponent={
-              <RelatedArticlesBlock 
+              // ✅ FIX: Using the correct, new component for the carousel
+              <TrendingNewsCarousel 
                 currentPostId={post.id} 
                 categoryIds={post.categories || []} 
                 categorySlug={categorySlug} 
@@ -330,6 +332,7 @@ export default async function PostPage({ params }: { params: { category: string;
           />
         </div>
       </article>
+      {/* The commented out carousel placement is removed as it's now inserted in the content */}
     </>
   );
 }
