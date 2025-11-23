@@ -4,7 +4,7 @@ import { ArticleCard, WPPost } from '@/components/ArticleCard';
 import LoadMorePosts from '@/components/LoadMorePosts'; 
 import { notFound } from 'next/navigation';
 import parse from 'html-react-parser';
-import { fetchPosts as fetchPostsFromApi } from '@/lib/api'; // 🎯 NEW: Import fetcher from utility
+import { fetchPosts as fetchPostsFromApi } from '/lib/api.ts'; // 🎯 FIX 1: Import fetcher from utility
 
 const API_URL = 'https://www.newsstate24.com/wp-json/wp/v2';
 const POSTS_PER_PAGE = 10; 
@@ -37,7 +37,7 @@ async function getCategoryData(slug: string): Promise<CategoryData | null> {
     }
 }
 
-// 2. Function for initial server fetch (Replaces old 'export function fetchPosts')
+// 2. Function for initial server fetch (Replaces problematic export fetchPosts)
 async function getInitialPosts(categoryId: number): Promise<WPPost[]> {
     try {
         // Server fetch includes the ISR option
@@ -72,7 +72,7 @@ export default async function CategoryPage({ params }: { params: { category: str
     }
 
     // Step 2: Get the *first* page of posts using the category ID
-    const initialPosts = await getInitialPosts(category.id); // 🎯 Use the dedicated server function
+    const initialPosts = await getInitialPosts(category.id);
 
     return (
         <section>
@@ -81,14 +81,20 @@ export default async function CategoryPage({ params }: { params: { category: str
                 {parse(category.name)}
             </h1>
             
-            {/* The Client Component handles rendering and "Load More" logic */}
-            <LoadMorePosts 
-                initialPosts={initialPosts}
-                categoryId={category.id}
-                totalPostCount={category.count} 
-                categoryName={parse(category.name)} 
-                fetcher={fetchPostsFromApi} // 🎯 Pass the safe utility function
-            />
+            {/* 🎯 Updated check to align with logic: only render LoadMorePosts if there's potential content */}
+            {initialPosts.length === 0 && category.count === 0 ? (
+                <p className="text-lg text-gray-600">
+                    इस कैटेगरी (**{parse(category.name)}**) में फ़िलहाल कोई पोस्ट उपलब्ध नहीं है।
+                </p>
+            ) : (
+                <LoadMorePosts 
+                    initialPosts={initialPosts}
+                    categoryId={category.id}
+                    totalPostCount={category.count}
+                    categoryName={parse(category.name)}
+                    fetcher={fetchPostsFromApi} // 🎯 FIX 1: Pass the safe utility function
+                />
+            )}
         </section>
     );
 }

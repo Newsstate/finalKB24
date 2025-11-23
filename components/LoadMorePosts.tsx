@@ -2,15 +2,17 @@
 'use client'; 
 
 import React, { useState, useMemo } from 'react';
-import { ArticleCard, WPPost } from './ArticleCard'; // Assuming correct path
-import parse from 'html-react-parser';
+import { ArticleCard, WPPost } from './ArticleCard';
+// 🎯 FIX 1: The problematic import is removed! The fetcher is passed via props.
+import parse from 'html-react-parser'; 
 
 // Define the fetcher function type
 type PostFetcher = (categoryId: number, page: number) => Promise<WPPost[]>;
 
+// Use the same constant as in the server component
 const POSTS_PER_PAGE = 10; 
 
-// Define the props, including the new fetcher
+// 🎯 Updated props interface to include the fetcher
 interface LoadMoreProps {
     initialPosts: WPPost[];
     categoryId: number;
@@ -35,12 +37,13 @@ const LoadMorePosts: React.FC<LoadMoreProps> = ({
         return posts.length < totalPostCount;
     }, [posts.length, totalPostCount]);
 
+    // Function to fetch the next page of posts
     const handleLoadMore = async () => {
         if (isLoading || !hasMorePosts) return;
 
         setIsLoading(true);
         try {
-            // Use the fetcher function passed via props
+            // 🎯 Use the fetcher function passed via props
             const newPosts = await fetcher(categoryId, page); 
 
             if (newPosts.length > 0) {
@@ -55,6 +58,8 @@ const LoadMorePosts: React.FC<LoadMoreProps> = ({
         }
     };
 
+    // Note: The empty check here is technically redundant if the Server Component logic is correct, 
+    // but it remains as a fallback.
     if (posts.length === 0 && totalPostCount === 0) {
         return (
              <p className="text-lg text-gray-600">
@@ -63,8 +68,10 @@ const LoadMorePosts: React.FC<LoadMoreProps> = ({
         );
     }
 
+
     return (
         <>
+            {/* Display all loaded posts */}
             <div className="space-y-6">
                 {posts.map((post: WPPost) => ( 
                     <ArticleCard 
@@ -75,6 +82,7 @@ const LoadMorePosts: React.FC<LoadMoreProps> = ({
                 ))}
             </div>
 
+            {/* Load More Button */}
             <div className="flex justify-center mt-10">
                 {hasMorePosts ? (
                     <button
@@ -85,6 +93,7 @@ const LoadMorePosts: React.FC<LoadMoreProps> = ({
                         {isLoading ? 'लोड हो रहा है...' : 'और कहानियाँ लोड करें'}
                     </button>
                 ) : (
+                    // Optional message when all posts are loaded
                     <p className="text-md text-gray-500 font-medium">
                         सभी {totalPostCount} कहानियाँ लोड हो चुकी हैं।
                     </p>
