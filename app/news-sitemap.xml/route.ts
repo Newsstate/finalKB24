@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const BASE_URL = 'https://www.khabar24live.com';
-const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
+const API_URL = 'https://newsstate24.com/wp-json/wp/v2';
 const PUBLICATION_NAME = 'Khabar 24 Live'; // MUST be your publication's name
 const PUBLICATION_LANGUAGE = 'hi'; // Hindi (hi)
 

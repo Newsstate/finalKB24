@@ -2,7 +2,7 @@
 import { MetadataRoute } from 'next';
 
 const BASE_URL = 'https://www.khabar24live.com';
-const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
+const API_URL = 'https://newsstate24.com/wp-json/wp/v2';
 
 // --- Type Definitions for WordPress Data ---
 interface Post {
