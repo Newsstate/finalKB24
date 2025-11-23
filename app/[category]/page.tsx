@@ -3,7 +3,7 @@ import { ArticleCard, WPPost } from '@/components/ArticleCard'; // ✅ IMPORT WP
 import { notFound } from 'next/navigation';
 import parse from 'html-react-parser';
 
-const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
+const API_URL = 'https://www.newsstate24.com/wp-json/wp/v2';
 
 // --- TYPE DEFINITIONS ---
 // Interface for category data fetched for static path generation

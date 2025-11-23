@@ -13,7 +13,7 @@ import parse from 'html-react-parser';
 import { TrendingNewsCarousel } from '@/components/TrendingNewsCarousel';
 import { RichTextRenderer } from '@/components/RichTextRenderer';
 
-const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
+const API_URL = 'https://newsstate24.com/wp-json/wp/v2';
 const BASE_URL = 'https://www.khabar24live.com';
 
 // --- TYPE DEFINITIONS ---
@@ -91,7 +91,7 @@ function getNewsArticleSchema(post: WPPost, articleUrl: string, titleText: strin
             "name": "Khabar24Live",
             "logo": {
                 "@type": "ImageObject",
-                "url": "https://www.khabar24live.com/wp-content/uploads/2025/09/khabar24live-300x300-1.jpg", 
+                "url": "https://www.newsstate24.com/wp-content/uploads/2025/09/khabar24live-300x300-1.jpg", 
                 "width": 600,
                 "height": 60
             }

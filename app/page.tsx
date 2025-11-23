@@ -6,7 +6,7 @@ import { CityNewsSection } from "@/components/CityNewsSection";
 import { HeroSideListSection } from "@/components/HeroSideListSection"; // 👈 IMPORT NEW COMPONENT
 
 // --- WordPress API config ---
-const API_URL = "https://khabar24live.com/wp-json/wp/v2";
+const API_URL = "https://newsstate24.com/wp-json/wp/v2";
 
 // ✅ CONFIG: Define the categories you want in the TOP TABS
 const FEATURED_CATEGORIES = [
