@@ -1,7 +1,10 @@
 // components/RichTextRenderer.tsx
 
+
 import React from 'react';
 import parse from 'html-react-parser';
+import { TrendingNewsCarousel } from '@/components/TrendingNewsCarousel';
+import { Ad300x250 } from './Ad300x250'; // Adjust path as needed
 
 interface RichTextRendererProps {
   htmlContent: string;

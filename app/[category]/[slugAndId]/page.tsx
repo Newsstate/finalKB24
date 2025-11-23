@@ -12,6 +12,7 @@ import parse from 'html-react-parser';
 // 1. Import the components
 import { TrendingNewsCarousel } from '@/components/TrendingNewsCarousel';
 import { RichTextRenderer } from '@/components/RichTextRenderer';
+import { Ad300x250 } from '@/components/Ad300x250';
 
 const API_URL = 'https://newsstate24.com/wp-json/wp/v2';
 const BASE_URL = 'https://www.khabar24live.com';
@@ -316,15 +317,13 @@ export default async function PostPage({ params }: { params: { category: string;
 
         {/* Main Content using RichTextRenderer */}
         <div className="prose max-w-none text-lg leading-relaxed text-black custom-article-body">
-          <RichTextRenderer 
+        <RichTextRenderer 
             htmlContent={content}
-            insertAfterParagraph={3} // Insert after the 3rd paragraph
+            // ✅ CHANGE 1: Set insertion point to 2 (after 2nd paragraph)
+            insertAfterParagraph={2} 
             insertionComponent={
-              <TrendingNewsCarousel 
-                currentPostId={post.id} 
-                categoryIds={post.categories || []} 
-                categorySlug={categorySlug} 
-              />
+              // ✅ CHANGE 2: Insert the AdSense Component
+              <Ad300x250 />
             }
           />
         </div>
