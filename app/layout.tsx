@@ -13,6 +13,7 @@ const API_URL = 'https://newsstate24.com/wp-json/wp/v2';
 const GA_TRACKING_ID = 'G-TKW1SEK3SH'; 
 const ADSENSE_PUB_ID = 'ca-pub-6466761575770733'; 
 
+
 // ✅ CONFIGURATION FOR SIDEBAR CATEGORY
 const SIDEBAR_CATEGORY_ID = 1; 
 const SIDEBAR_CATEGORY_TITLE = 'ट्रेंडिंग न्यूज़'; 
@@ -115,6 +116,7 @@ const CategoryPostsSidebar: React.FC<{ posts: CategoryPost[], categoryMap: Map<n
     </div>
   );
 };
+
 
 // --- ROOT LAYOUT ---
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
