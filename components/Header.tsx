@@ -1,9 +1,6 @@
 // components/Header.tsx
 import Link from 'next/link';
 import Image from 'next/image'; 
-import { FaSearch } from 'react-icons/fa'; 
-import React, { useEffect } from 'react'; // 👈 Import React and useEffect for the Ad component
-import Script from 'next/script'; // Import Script for ad push (optional, but good practice)
 
 // Define the categories (copied from layout.tsx)
 const categories = [
@@ -29,83 +26,34 @@ const categories = [
 ];
 
 const LOGO_URL = "https://www.newsstate24.com/wp-content/uploads/2025/09/khabar24live-300x300-1.jpg";
-const ADSENSE_PUB_ID = 'ca-pub-6466761575770733'; // Define the constant here
-
-// ===========================================
-// 🔥 NEW COMPONENT: HEADER AD (Client Side)
-// ===========================================
-// Must be a client component to use useEffect
-const HeaderAutoAd: React.FC = () => {
-    // Client-side logic to push the ad
-    useEffect(() => {
-        try {
-            // Check if the AdSense script is loaded and push the ad unit
-            if (typeof window !== 'undefined' && (window as any).adsbygoogle) {
-                (window as any).adsbygoogle.push({});
-            }
-        } catch (e) {
-            console.error("Header Auto Ad push failed:", e);
-        }
-    }, []);
-
-    return (
-        <div className="flex-1 max-w-lg mx-4 hidden lg:block"> {/* Hide on mobile/small screens, show on large screens */}
-            <ins 
-                className="adsbygoogle"
-                style={{ display: 'block' }}
-                data-ad-client={ADSENSE_PUB_ID}
-                data-ad-slot="1052759617" 
-                data-ad-format="auto"
-                data-full-width-responsive="true"
-            />
-        </div>
-    );
-};
-// ===========================================
-// END: HEADER AD COMPONENT
-// ===========================================
-
 
 export function Header() {
-  const mainHeaderHeight = 64; 
-
   return (
     <>
-      {/* === MAIN HEADER (Logo, Ad, and Search) === */}
+      {/* === MAIN HEADER (Logo/Branding) === */}
+      {/* 🎯 CHANGED: bg-red-700 to bg-white. Removed text-white (not needed with white BG) */}
       <header className="bg-white shadow-lg sticky top-0 z-30">
-        <div className="container mx-auto p-4 flex justify-between items-center h-[64px]">
+        <div className="container mx-auto p-2 flex justify-between items-center">
           
           <Link href="/" className="flex items-center">
             <Image
                 src={LOGO_URL}
                 alt="Khabar24Live Logo"
-                width={150} 
-                height={40} 
+                width={150} // Set appropriate width for display
+                height={40} // Set appropriate height for display
                 unoptimized
                 priority
                 className="rounded-sm" 
             />
           </Link>
           
-          {/* ✅ NEW: Auto Ad Placement */}
-          {/* NOTE: If you extract HeaderAutoAd to a separate file, 
-             you must add 'use client' at the top of that file. */}
-          <HeaderAutoAd />
-
-          {/* Search Button/Icon */}
-          <Link 
-            href="/search" 
-            aria-label="Search"
-            className="text-gray-700 hover:text-red-700 transition p-2 rounded-full border border-gray-300 hover:border-red-700 flex-shrink-0"
-          >
-            <FaSearch size={20} />
-          </Link>
-          
+          {/* Optional: You can place a search box or ad space here */}
         </div>
       </header>
 
       {/* === HORIZONTAL CATEGORY NAVIGATION BAR (Sticky Position) === */}
-      <nav className="bg-gray-800 text-white shadow-md sticky top-[64px] z-20"> 
+      {/* The navigation bar background remains dark for visual separation */}
+      <nav className="bg-gray-800 text-white shadow-md sticky top-[64px] z-20">
         <div 
           className="container mx-auto px-4 py-2 flex overflow-x-auto whitespace-nowrap scrollbar-hide"
         >
@@ -113,6 +61,7 @@ export function Header() {
             <Link 
               key={cat.slug}
               href={`/${cat.slug}`}
+              // Hover state changed to bg-red-700 for contrast
               className="text-sm font-medium px-4 py-1 hover:bg-red-700 transition duration-150 flex-shrink-0"
             >
               {cat.name}
