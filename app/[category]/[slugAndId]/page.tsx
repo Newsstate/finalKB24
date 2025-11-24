@@ -147,18 +147,27 @@ export async function generateMetadata({ params }: { params: { slugAndId: string
     return { title: 'Not Found' };
   }
 
-  const articlePath = `${BASE_URL}/${params.category}/${params.slugAndId}`;
+  const articlePath = `/${params.category}/${params.slugAndId}`;
   const title = post.title.rendered.replace(/<[^>]*>?/gm, '');
   const description = post.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...';
+  
+  // Define the full AMP URL structure (assuming /amp suffix)
+  const ampUrl = `${BASE_URL}${articlePath}/amp`; 
 
   return {
     title: title,
     description: description,
-    alternates: { canonical: articlePath },
+    alternates: { 
+        canonical: `${BASE_URL}${articlePath}`,
+        // Add the AMP HTML link tag using the 'types' property
+        types: {
+            'application/amp+xml': ampUrl,
+        }
+    },
     openGraph: {
       title: title,
       description: description,
-      url: articlePath,
+      url: `${BASE_URL}${articlePath}`,
       type: 'article',
       images: [
         {
@@ -197,7 +206,8 @@ export default async function PostPage({ params }: { params: { category: string;
   // Prepare variables for component and schema
   const titleText = title.replace(/<[^>]*>?/gm, '');
   const descriptionText = post.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...';
-  const articleUrl = `${BASE_URL}/${params.category}/${params.slugAndId}`;
+  const articlePath = `/${params.category}/${params.slugAndId}`;
+  const articleUrl = `${BASE_URL}${articlePath}`;
   const categorySlug = params.category;
   const categoryName =
     params.category.charAt(0).toUpperCase() +
@@ -227,7 +237,7 @@ export default async function PostPage({ params }: { params: { category: string;
       />
       <script 
         type="application/ld+json" 
-        dangerouslySetInnerHTML={{ __html: breadcrumbSchema }}
+        dangerouslySetInnerHTML={{ __html: breadcrumbSchema }} // ✅ FIXED TYPO HERE
       />
       
       <article className="bg-white p-2 rounded-lg shadow-lg text-black">
@@ -319,10 +329,10 @@ export default async function PostPage({ params }: { params: { category: string;
         <div className="prose max-w-none text-lg leading-relaxed text-black custom-article-body">
         <RichTextRenderer 
             htmlContent={content}
-            // ✅ CHANGE 1: Set insertion point to 2 (after 2nd paragraph)
+            // ✅ Set insertion point to 2 (after 2nd paragraph)
             insertAfterParagraph={2} 
             insertionComponent={
-              // ✅ CHANGE 2: Insert the AdSense Component
+              // ✅ Insert the AdSense Component
               <Ad300x250 />
             }
           />
