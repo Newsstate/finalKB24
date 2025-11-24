@@ -161,7 +161,7 @@ export async function generateMetadata({ params }: { params: { slugAndId: string
         canonical: `${BASE_URL}${articlePath}`,
         // Add the AMP HTML link tag using the 'types' property
         types: {
-            'application/amp+xml': ampUrl,
+            'amphtml': ampUrl,
         }
     },
     openGraph: {
