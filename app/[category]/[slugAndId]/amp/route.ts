@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const API_URL = "https://newsstate24.com/wp-json/wp/v2";
+const API_URL = "https://khabar24live.com/wp-json/wp/v2";
 const BASE_URL = "https://www.khabar24live.com";
 
 // Categories for navigation
@@ -196,3 +196,4 @@ export async function GET(request: NextRequest, { params }: { params: { category
     return new NextResponse("Server error", { status: 500 });
   }
 }
+
