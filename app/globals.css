@@ -51,3 +51,45 @@ body {
   line-height: 1.6 !important;
   font-size: 1.125rem; /* matches text-lg */
 }
+
+
+
+/* ==============================
+   Article Content Spacing Fix
+   ============================== */
+
+   .custom-article-body p {
+    margin-bottom: 1.25rem;   /* space after paragraph */
+    line-height: 1.8;         /* comfortable reading */
+  }
+  
+  .custom-article-body p:last-child {
+    margin-bottom: 0;
+  }
+  
+  /* Headings spacing */
+  .custom-article-body h2,
+  .custom-article-body h3,
+  .custom-article-body h4 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
+  
+  /* Lists spacing */
+  .custom-article-body ul,
+  .custom-article-body ol {
+    margin: 1.25rem 0;
+    padding-left: 1.25rem;
+  }
+  
+  .custom-article-body li {
+    margin-bottom: 0.6rem;
+  }
+  
+  /* Images inside content */
+  .custom-article-body img {
+    margin: 1.5rem 0;
+    border-radius: 0.75rem;
+  }
+  

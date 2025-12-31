@@ -50,6 +50,7 @@ export function Header() {
           
           {/* Optional: You can place a search box or ad space here */}
         </div>
+        
       </header>
 
       {/* === HORIZONTAL CATEGORY NAVIGATION BAR (Sticky Position) === */}
