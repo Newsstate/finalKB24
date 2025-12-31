@@ -2,7 +2,7 @@
 
 import { WPPost } from '@/components/ArticleCard'; // Import necessary types
 // Define constants here or import them if they are in a central config file
-const API_URL = 'https://www.newsstate24.com/wp-json/wp/v2';
+const API_URL = 'https://www.khabar24live.com/wp-json/wp/v2';
 const POSTS_PER_PAGE = 10; 
 
 // 🎯 EXPORTED: This function is now safe to be imported by ANY component (Server or Client)
