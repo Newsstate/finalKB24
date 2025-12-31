@@ -9,7 +9,7 @@ import Image from 'next/image';
 import Script from 'next/script'; // 👈 IMPORT THE SCRIPT COMPONENT
 
 // --- CONFIGURATION CONSTANTS ---
-const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
+const API_URL = 'https://www.khabar24live.com/wp-json/wp/v2';
 const GA_TRACKING_ID = 'G-TKW1SEK3SH'; 
 const ADSENSE_PUB_ID = 'ca-pub-6466761575770733'; 
 

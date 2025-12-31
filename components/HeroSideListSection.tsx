@@ -2,7 +2,7 @@
 import { ArticleCard, WPPost } from "@/components/ArticleCard";
 
 // --- Configuration ---
-const API_URL = "https://khabar24live.com/wp-json/wp/v2";
+const API_URL = "https://www.khabar24live.com/wp-json/wp/v2";
 const POSTS_TO_FETCH = 6; // 1 Hero + 5 List items
 
 // --- Fetch Utility ---
