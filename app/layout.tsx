@@ -172,7 +172,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       
       <body>
         <Header />
-
+        <meta name="google-site-verification" content="tIj3q1ffMOLmnc6fGrlCDIR1fOfIExVhbXcpg_MzxXQ" />
         {/* === Main Content Area === */}
         <main className="max-w-7xl mx-auto p-4 sm:p-8 min-h-screen">
           <div className="flex flex-col lg:flex-row gap-8">
