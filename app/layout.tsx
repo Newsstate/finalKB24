@@ -186,8 +186,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <aside className="w-full lg:w-1/4 lg:sticky lg:top-24 h-fit space-y-8">
               
               {/* 🎯 START: AD CODE BLOCK (BEFORE TRENDING POSTS) */}
-              Insert the AdSense Component
-              <Ad300x250 />
+              विज्ञापन
+           <Ad300x250 />
 
             
               {/* 🎯 END: AD CODE BLOCK */}

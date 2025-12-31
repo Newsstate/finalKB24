@@ -93,3 +93,6 @@ body {
     border-radius: 0.75rem;
   }
   
+  .p-4 {
+    padding: 5px;
+}
