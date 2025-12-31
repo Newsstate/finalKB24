@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { parseISO, format } from 'date-fns';
 import { hi } from 'date-fns/locale';
 import Image from 'next/image'; 
+import { Ad300x250 } from '@/components/Ad300x250';
 import Script from 'next/script'; // 👈 IMPORT THE SCRIPT COMPONENT
 
 // --- CONFIGURATION CONSTANTS ---
@@ -185,21 +186,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <aside className="w-full lg:w-1/4 lg:sticky lg:top-24 h-fit space-y-8">
               
               {/* 🎯 START: AD CODE BLOCK (BEFORE TRENDING POSTS) */}
-              <div className="hide-for-amp adsense-wrapper">
-                <div className="adsense-container">
-                  {/* */}
-                  <ins className="adsbygoogle"
-                    style={{ display: 'inline-block', width: '300px', height: '250px' }}
-                    data-ad-client={ADSENSE_PUB_ID}
-                    data-ad-slot="1709198458"></ins>
-                  {/* Push ad to render */}
-                  <Script id="adsense-push-sidebar-before-trending" strategy="afterInteractive">
-                    {`
-                      (window.adsbygoogle = window.adsbygoogle || []).push({});
-                    `}
-                  </Script>
-                </div>
-              </div>
+              Insert the AdSense Component
+              <Ad300x250 />
 
             
               {/* 🎯 END: AD CODE BLOCK */}
