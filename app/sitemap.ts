@@ -1,7 +1,7 @@
 // app/sitemap.ts
 import { MetadataRoute } from 'next';
 
-const BASE_URL = 'https://www.khabar24live.com';
+const BASE_URL = 'https://www.newsstate24.com';
 const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
 
 // --- Type Definitions for WordPress Data ---

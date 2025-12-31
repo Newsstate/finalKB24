@@ -26,7 +26,7 @@ const categories = [
     { slug: 'lifestyle', name: 'लाइफस्टाइल' },
 ];
 
-const LOGO_URL = "https://www.khabar24live.com/wp-content/uploads/2025/09/khabar24live-300x300-1.jpg";
+const LOGO_URL = "https://www.khabar24live.com/wp-content/uploads/2026/01/site-logo.png";
 
 export function Header() {
   return (
@@ -39,7 +39,7 @@ export function Header() {
           <Link href="/" className="flex items-center">
             <Image
                 src={LOGO_URL}
-                alt="Khabar24Live Logo"
+                alt="newsstate24 Logo"
                 width={150} // Set appropriate width for display
                 height={40} // Set appropriate height for display
                 unoptimized

@@ -1,9 +1,9 @@
 // app/news-sitemap/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
-const BASE_URL = 'https://www.khabar24live.com';
+const BASE_URL = 'https://www.newsstate24.com';
 const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
-const PUBLICATION_NAME = 'Khabar 24 Live'; // MUST be your publication's name
+const PUBLICATION_NAME = 'Newsstate24'; // MUST be your publication's name
 const PUBLICATION_LANGUAGE = 'hi'; // Hindi (hi)
 
 // --- Type Definition for News Data ---

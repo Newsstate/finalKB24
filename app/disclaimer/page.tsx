@@ -4,13 +4,13 @@ import Link from 'next/link';
 
 // Define metadata for the specific page
 export const metadata = {
-  title: 'अस्वीकरण (Disclaimer) - Khabar24Live',
-  description: 'खबर 24 लाइव वेबसाइट के उपयोग से संबंधित सामान्य अस्वीकरण और शर्तें।',
+  title: 'अस्वीकरण (Disclaimer) - Newsstate24',
+  description: 'न्यूज़ स्टेट 24 वेबसाइट के उपयोग से संबंधित सामान्य अस्वीकरण और शर्तें।',
 };
 
 const DisclaimerPage: React.FC = () => {
     // Define the website URL for clarity within the disclaimer
-    const websiteUrl = 'https://www.khabar24live.com';
+    const websiteUrl = 'https://www.newsstate24.com';
 
     return (
         <div className="max-w-4xl mx-auto p-4 sm:p-6 bg-white shadow-xl rounded-xl">

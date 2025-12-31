@@ -2,19 +2,19 @@ import React from 'react';
 
 // Define metadata for the specific page
 export const metadata = {
-  title: 'गोपनीयता नीति (Privacy Policy) - Khabar24Live',
-  description: 'Khabar24Live.com द्वारा पाठकों के डेटा, कुकीज़ और टिप्पणी जानकारी के उपयोग की नीति।',
+  title: 'गोपनीयता नीति (Privacy Policy) - Newsstate24',
+  description: 'newsstate24.com द्वारा पाठकों के डेटा, कुकीज़ और टिप्पणी जानकारी के उपयोग की नीति।',
 };
 
 const PrivacyPolicyPage: React.FC = () => {
     // Define the website URL for consistency
-    const websiteUrl = 'https://www.khabar24live.com';
+    const websiteUrl = 'https://www.newsstate24.com';
 
     return (
         <div className="max-w-4xl mx-auto p-4 sm:p-6 bg-white shadow-xl rounded-xl">
             <h1 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">गोपनीयता नीति (Privacy Policy)</h1>
             <p className="text-gray-700 mb-6">
-                यह नीति बताती है कि जब आप Khabar24Live.com ({websiteUrl}) पर जाते हैं, टिप्पणी करते हैं, या लॉग इन करते हैं, तो हम आपका डेटा कैसे एकत्र, उपयोग और साझा करते हैं।
+                यह नीति बताती है कि जब आप Newsstate24.com ({websiteUrl}) पर जाते हैं, टिप्पणी करते हैं, या लॉग इन करते हैं, तो हम आपका डेटा कैसे एकत्र, उपयोग और साझा करते हैं।
             </p>
 
             {/* --- 1. Who We Are --- */}

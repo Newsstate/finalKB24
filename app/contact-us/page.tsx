@@ -3,10 +3,10 @@ import { Metadata } from 'next';
 import { FaEnvelope, FaMapMarkerAlt, FaPhone } from 'react-icons/fa'; // Requires 'npm install react-icons'
 
 export const metadata: Metadata = {
-  title: 'Contact Us | Khabar24Live',
-  description: 'Reach out to the Khabar24Live editorial team for general inquiries, news tips, or advertising opportunities.',
+  title: 'Contact Us | Newsstate24',
+  description: 'Reach out to the Newsstate24 editorial team for general inquiries, news tips, or advertising opportunities.',
   alternates: {
-    canonical: 'https://www.khabar24live.com/contact-us',
+    canonical: 'https://www.Newsstate24.com/contact-us',
   }
 };
 
@@ -28,9 +28,9 @@ export default function ContactUsPage() {
           <div>
             <h3 className="font-bold text-xl mb-1">ईमेल (Email)</h3>
             <p className="text-sm">For General Inquiries:</p>
-            <a href="mailto:info@khabar24live.com" className="text-red-600 hover:underline font-medium">info@khabar24live.com</a>
+            <a href="mailto:info@Newsstate24.com" className="text-red-600 hover:underline font-medium">info@Newsstate24.com</a>
             <p className="text-sm mt-2">For Editorial/News Tips:</p>
-            <a href="mailto:editor@khabar24live.com" className="text-red-600 hover:underline font-medium">editor@khabar24live.com</a>
+            <a href="mailto:editor@Newsstate24.com" className="text-red-600 hover:underline font-medium">editor@Newsstate24.com</a>
           </div>
         </div>
 
@@ -49,7 +49,7 @@ export default function ContactUsPage() {
           <FaMapMarkerAlt size={24} className="text-red-700 mr-4 mt-1" />
           <div>
             <h3 className="font-bold text-xl mb-1">पता (Address)</h3>
-            <p className="text-sm">Khabar24Live Media House,</p>
+            <p className="text-sm">Newsstate24 Media House,</p>
             <p className="text-sm">Office No. 123, New Delhi, India</p>
           </div>
         </div>

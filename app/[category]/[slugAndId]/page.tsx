@@ -15,7 +15,7 @@ import { RichTextRenderer } from '@/components/RichTextRenderer';
 import { Ad300x250 } from '@/components/Ad300x250';
 
 const API_URL = 'https://www.khabar24live.com/wp-json/wp/v2';
-const BASE_URL = 'https://www.khabar24live.com';
+const BASE_URL = 'https://www.newsstate24.com';
 
 // --- TYPE DEFINITIONS ---
 interface WPPost {
@@ -85,11 +85,11 @@ function getNewsArticleSchema(post: WPPost, articleUrl: string, titleText: strin
         "dateModified": post.modified_gmt || post.date,
         "author": {
             "@type": "Person",
-            "name": author?.name || "Khabar24Live Desk",
+            "name": author?.name || "Newsstate24 Desk",
         },
         "publisher": {
             "@type": "Organization",
-            "name": "Khabar24Live",
+            "name": "Newsstate24",
             "logo": {
                 "@type": "ImageObject",
                 "url": "https://www.newsstate24.com/wp-content/uploads/2025/09/khabar24live-300x300-1.jpg", 
@@ -218,7 +218,7 @@ export default async function PostPage({ params }: { params: { category: string;
   const newsArticleSchema = getNewsArticleSchema(post, articleUrl, titleText, descriptionText);
   const breadcrumbSchema = getBreadcrumbSchema(categoryName, categorySlug, postTitleText, articleUrl);
 
-  const authorName = post._embedded.author?.[0]?.name || "Khabar24Live Desk";
+  const authorName = post._embedded.author?.[0]?.name || "Newsstate24 Desk";
   const authorAvatarUrl = post._embedded.author?.[0]?.avatar_urls?.[96] || "/default-avatar.png";
 
   const featuredMedia = post._embedded["wp:featuredmedia"]?.[0];

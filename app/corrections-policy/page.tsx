@@ -3,20 +3,20 @@ import Link from 'next/link'; // Assuming Link is available in your environment
 
 // Define metadata for the specific page
 export const metadata = {
-  title: 'सुधार नीति (Corrections Policy) - Khabar24Live',
-  description: 'खबर 24 लाइव की सामग्री में त्रुटियों को तेज़ी और पारदर्शिता से सुधारने की नीति।',
+  title: 'सुधार नीति (Corrections Policy) - Newsstate24',
+  description: 'न्यूज़ स्टेट 24 की सामग्री में त्रुटियों को तेज़ी और पारदर्शिता से सुधारने की नीति।',
 };
 
 const CorrectionsPolicyPage: React.FC = () => {
     // Define the website URL (placeholder for context)
-    const websiteUrl = 'https://www.khabar24live.com';
+    const websiteUrl = 'https://www.Newsstate24.com';
 
     return (
         <div className="max-w-4xl mx-auto p-4 sm:p-6 bg-white shadow-xl rounded-xl">
             <h1 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">सुधार नीति (Corrections Policy)</h1>
 
             <p className="text-gray-700 mb-6">
-                Khabar24live.com पाठकों को सटीक और भरोसेमंद समाचार प्रदान करने के लिए प्रतिबद्ध है। हमारी सुधार नीति इस बात को सुनिश्चित करती है कि यदि किसी समाचार, लेख या रिपोर्ट में कोई त्रुटि हो, तो उसे **तेजी और पारदर्शिता के साथ ठीक किया जाए**।
+            Newsstate24.com पाठकों को सटीक और भरोसेमंद समाचार प्रदान करने के लिए प्रतिबद्ध है। हमारी सुधार नीति इस बात को सुनिश्चित करती है कि यदि किसी समाचार, लेख या रिपोर्ट में कोई त्रुटि हो, तो उसे **तेजी और पारदर्शिता के साथ ठीक किया जाए**।
             </p>
 
             {/* --- 1. Our Commitment --- */}
@@ -29,7 +29,7 @@ const CorrectionsPolicyPage: React.FC = () => {
                     <span className="font-semibold">पारदर्शिता:</span> यदि किसी सामग्री में कोई गलती पाई जाती है, तो हम उसे **स्पष्ट रूप से पहचानते और सुधारते** हैं।
                 </li>
                 <li>
-                    <span className="font-semibold">उत्तरदायित्व:</span> Khabar24live.com पाठकों के भरोसे को महत्व देता है और सुधार प्रक्रिया में पूरी जिम्मेदारी निभाता है।
+                    <span className="font-semibold">उत्तरदायित्व:</span> Newsstate24.com पाठकों के भरोसे को महत्व देता है और सुधार प्रक्रिया में पूरी जिम्मेदारी निभाता है।
                 </li>
             </ul>
 

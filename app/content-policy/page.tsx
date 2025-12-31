@@ -3,8 +3,8 @@ import React from 'react';
 
 // Define metadata for the specific page
 export const metadata = {
-  title: 'कंटेंट पॉलिसी - Khabar24Live',
-  description: 'खबर 24 लाइव पर कंटेंट के प्रकाशन, सटीकता और उपयोग से संबंधित नीतियां।',
+  title: 'कंटेंट पॉलिसी - Newsstate24',
+  description: 'न्यूज़ स्टेट 24 पर कंटेंट के प्रकाशन, सटीकता और उपयोग से संबंधित नीतियां।',
 };
 
 const ContentPolicyPage: React.FC = () => {
@@ -13,7 +13,7 @@ const ContentPolicyPage: React.FC = () => {
       <h1 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">कंटेंट पॉलिसी (Content Policy)</h1>
 
       <p className="text-gray-600 mb-8">
-        खबर 24 लाइव (`https://www.khabar24live.com`) एक विश्वसनीय और ज़िम्मेदार न्यूज़ प्लेटफ़ॉर्म बनने के लिए प्रतिबद्ध है। यह कंटेंट पॉलिसी हमारे द्वारा प्रकाशित, साझा और उपयोग किए जाने वाले कंटेंट के लिए हमारे मानकों, नियमों और नैतिक दिशानिर्देशों की रूपरेखा बताती है।
+      न्यूज़ स्टेट 24 (`https://www.newsstate24.com`) एक विश्वसनीय और ज़िम्मेदार न्यूज़ प्लेटफ़ॉर्म बनने के लिए प्रतिबद्ध है। यह कंटेंट पॉलिसी हमारे द्वारा प्रकाशित, साझा और उपयोग किए जाने वाले कंटेंट के लिए हमारे मानकों, नियमों और नैतिक दिशानिर्देशों की रूपरेखा बताती है।
       </p>
 
       {/* --- 1. Accuracy and Verification --- */}

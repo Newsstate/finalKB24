@@ -3,8 +3,8 @@ import React from 'react';
 
 // Define metadata for the specific page
 export const metadata = {
-  title: 'संपादकीय नीति (Editorial Policy) - Khabar24Live',
-  description: 'खबर 24 लाइव की पत्रकारिता, सटीकता, निष्पक्षता और स्वतंत्रता के मानक।',
+  title: 'संपादकीय नीति (Editorial Policy) - Newsstate24',
+  description: 'न्यूज़ स्टेट 24 की पत्रकारिता, सटीकता, निष्पक्षता और स्वतंत्रता के मानक।',
 };
 
 const EditorialPolicyPage: React.FC = () => {
@@ -13,7 +13,7 @@ const EditorialPolicyPage: React.FC = () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">संपादकीय नीति (Editorial Policy)</h1>
 
             <p className="text-gray-700 mb-6">
-                Khabar24live.com की प्राथमिकता है कि पाठकों को **सटीक, निष्पक्ष और भरोसेमंद समाचार** प्रदान किए जाएँ। हमारी संपादकीय नीति इस सिद्धांत पर आधारित है कि समाचार का उद्देश्य केवल **सूचना और जागरूकता** प्रदान करना होना चाहिए, न कि किसी भी पक्षपात या प्रचार का माध्यम।
+            newsstate24.com की प्राथमिकता है कि पाठकों को **सटीक, निष्पक्ष और भरोसेमंद समाचार** प्रदान किए जाएँ। हमारी संपादकीय नीति इस सिद्धांत पर आधारित है कि समाचार का उद्देश्य केवल **सूचना और जागरूकता** प्रदान करना होना चाहिए, न कि किसी भी पक्षपात या प्रचार का माध्यम।
             </p>
 
             {/* --- 1. Our Editorial Vision --- */}
@@ -23,7 +23,7 @@ const EditorialPolicyPage: React.FC = () => {
                     <span className="font-semibold">सत्यापन और तथ्य-जांच:</span> सभी समाचार और लेख प्रकाशित होने से पहले **स्रोतों की जांच और सत्यापन** (fact-checking) से गुजरते हैं।
                 </li>
                 <li>
-                    <span className="font-semibold">निष्पक्षता और संतुलन:</span> Khabar24live.com यह सुनिश्चित करता है कि समाचार **सभी दृष्टिकोणों का संतुलित चित्रण** करें, किसी एक पक्ष का अनावश्यक समर्थन न हो।
+                    <span className="font-semibold">निष्पक्षता और संतुलन:</span> Newsstate24.com यह सुनिश्चित करता है कि समाचार **सभी दृष्टिकोणों का संतुलित चित्रण** करें, किसी एक पक्ष का अनावश्यक समर्थन न हो।
                 </li>
                 <li>
                     <span className="font-semibold">गोपनीयता और सम्मान:</span> व्यक्तिगत जानकारी का सम्मान किया जाता है और किसी भी समाचार में इसे बिना अनुमति या मजबूत संपादकीय औचित्य के साझा नहीं किया जाता।
@@ -48,7 +48,7 @@ const EditorialPolicyPage: React.FC = () => {
             <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3">3. संपादकीय स्वतंत्रता (Editorial Independence)</h2>
             <ul className="list-disc ml-6 text-gray-700 space-y-2 mt-3">
                 <li>
-                    <span className="font-semibold">पूर्ण स्वतंत्रता:</span> Khabar24live.com का संपादकीय विभाग **पूर्ण स्वतंत्रता** के साथ समाचार का चयन, रिपोर्टिंग और प्रकाशन करता है।
+                    <span className="font-semibold">पूर्ण स्वतंत्रता:</span> Newsstate24.com का संपादकीय विभाग **पूर्ण स्वतंत्रता** के साथ समाचार का चयन, रिपोर्टिंग और प्रकाशन करता है।
                 </li>
                 <li>
                     <span className="font-semibold">बाहरी दबावों से मुक्ति:</span> हमारी टीम **राजनीतिक, व्यावसायिक या अन्य बाहरी दबावों** से स्वतंत्र रहती है।

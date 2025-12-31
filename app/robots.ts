@@ -2,7 +2,7 @@
 import { MetadataRoute } from 'next';
 
 // IMPORTANT: Replace 'https://www.yournewssite.com' with your actual domain.
-const BASE_URL = 'https://www.khabar24live.com'; 
+const BASE_URL = 'https://www.newsstate24.com'; 
 
 export default function robots(): MetadataRoute.Robots {
   return {

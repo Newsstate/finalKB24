@@ -2,11 +2,11 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'About Us | Khabar24Live',
-  description: 'Read about the mission, vision, and editorial team of Khabar24Live, your source for accurate and fast Hindi news.',
+  title: 'About Us | Newsstate24',
+  description: 'Read about the mission, vision, and editorial team of Newsstate24, your source for accurate and fast Hindi news.',
   // Static pages use canonical link pointing to self
   alternates: {
-    canonical: 'https://www.khabar24live.com/about-us',
+    canonical: 'https://www.newsstate24.com/about-us',
   }
 };
 
@@ -14,12 +14,12 @@ export default function AboutUsPage() {
   return (
     <section className="bg-white p-6 rounded-lg shadow-lg">
       <h1 className="text-4xl font-extrabold mb-6 text-red-700 border-b pb-2">
-        हमारे बारे में (About Khabar24Live)
+        हमारे बारे में (About Newsstate24)
       </h1>
       
       <div className="space-y-6 text-gray-700">
         <p className="text-lg">
-          Khabar24Live एक अग्रणी हिंदी समाचार पोर्टल है जो पाठकों को देश और दुनिया की हर ताज़ा और सटीक खबर पहुँचाने के लिए समर्पित है। हमारा उद्देश्य राजनीति, मनोरंजन, खेल, धर्म, व्यापार और क्षेत्रीय समाचारों (जैसे **बिहार**, **यूपी**, **एमपी**) पर गहराई से रिपोर्टिंग करना है।
+        Newsstate24 एक अग्रणी हिंदी समाचार पोर्टल है जो पाठकों को देश और दुनिया की हर ताज़ा और सटीक खबर पहुँचाने के लिए समर्पित है। हमारा उद्देश्य राजनीति, मनोरंजन, खेल, धर्म, व्यापार और क्षेत्रीय समाचारों (जैसे **बिहार**, **यूपी**, **एमपी**) पर गहराई से रिपोर्टिंग करना है।
         </p>
 
         <h2 className="text-2xl font-bold mt-8 mb-3 text-gray-900">

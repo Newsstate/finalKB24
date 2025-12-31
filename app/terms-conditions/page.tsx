@@ -3,20 +3,20 @@ import React from 'react';
 
 // Define metadata for the specific page
 export const metadata = {
-  title: 'नियम और शर्तें (Terms & Conditions) - Khabar24Live',
-  description: 'खबर 24 लाइव वेबसाइट का उपयोग करने से संबंधित नियम और शर्तें।',
+  title: 'नियम और शर्तें (Terms & Conditions) - Newsstate24',
+  description: 'न्यूज़ स्टेट 24 वेबसाइट का उपयोग करने से संबंधित नियम और शर्तें।',
 };
 
 const TermsAndConditionsPage: React.FC = () => {
     // Define the website URL for clarity
-    const websiteUrl = 'https://www.khabar24live.com';
+    const websiteUrl = 'https://www.newsstate24.com';
 
     return (
         <div className="max-w-4xl mx-auto p-4 sm:p-6 bg-white shadow-xl rounded-xl">
             <h1 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">नियम और शर्तें (Terms & Conditions)</h1>
 
             <p className="text-gray-700 mb-6">
-                स्वागत है Khabar24live.com पर! इस वेबसाइट (`{websiteUrl}`) का उपयोग करने से आप इन नियम और शर्तों से सहमत होते हैं। कृपया ध्यानपूर्वक पढ़ें।
+                स्वागत है Newsstate24.com पर! इस वेबसाइट (`{websiteUrl}`) का उपयोग करने से आप इन नियम और शर्तों से सहमत होते हैं। कृपया ध्यानपूर्वक पढ़ें।
             </p>
 
             {/* --- 1. Terms of Use --- */}
@@ -26,7 +26,7 @@ const TermsAndConditionsPage: React.FC = () => {
                     वेबसाइट की सामग्री केवल **व्यक्तिगत और गैर-व्यावसायिक उपयोग** के लिए है।
                 </li>
                 <li>
-                    कोई भी उपयोगकर्ता Khabar24live.com की सामग्री को कॉपी, पुनःप्रकाशित या वितरित **नहीं कर सकता** बिना हमारी लिखित अनुमति के।
+                    कोई भी उपयोगकर्ता Newsstate24.com की सामग्री को कॉपी, पुनःप्रकाशित या वितरित **नहीं कर सकता** बिना हमारी लिखित अनुमति के।
                 </li>
             </ul>
 
@@ -37,7 +37,7 @@ const TermsAndConditionsPage: React.FC = () => {
                     हमारी वेबसाइट पर प्रकाशित समाचार, लेख, तस्वीरें और वीडियो केवल **सामान्य जानकारी और सूचना** के लिए हैं।
                 </li>
                 <li>
-                    Khabar24live.com सामग्री की **सटीकता, पूर्णता या अद्यतनता** की गारंटी नहीं देता।
+                Newsstate24.com सामग्री की **सटीकता, पूर्णता या अद्यतनता** की गारंटी नहीं देता।
                 </li>
                 <li>
                     किसी भी जानकारी का उपयोग करने या उस पर भरोसा करने से होने वाली **किसी भी हानि की जिम्मेदारी उपयोगकर्ता की होगी**।
@@ -62,7 +62,7 @@ const TermsAndConditionsPage: React.FC = () => {
                     उपयोगकर्ता को वेबसाइट का उपयोग **कानूनी रूप से** करना होगा।
                 </li>
                 <li>
-                    किसी भी प्रकार की अवैध गतिविधि, कॉपीराइट उल्लंघन या वेबसाइट की सुरक्षा को प्रभावित करने वाले कार्य के लिए Khabar24live.com **उत्तरदायी नहीं होगा**।
+                    किसी भी प्रकार की अवैध गतिविधि, कॉपीराइट उल्लंघन या वेबसाइट की सुरक्षा को प्रभावित करने वाले कार्य के लिए Newsstate24.com **उत्तरदायी नहीं होगा**।
                 </li>
             </ul>
 
@@ -70,7 +70,7 @@ const TermsAndConditionsPage: React.FC = () => {
             <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3">5. परिवर्तन और अपडेट (Changes and Updates)</h2>
             <ul className="list-disc ml-6 text-gray-700 space-y-2 mt-3">
                 <li>
-                    Khabar24live.com समय-समय पर **नियम और शर्तों में बदलाव** कर सकता है।
+                Newsstate24.com समय-समय पर **नियम और शर्तों में बदलाव** कर सकता है।
                 </li>
                 <li>
                     बदलाव प्रकाशित होने के तुरंत बाद प्रभावी हो जाते हैं। उपयोगकर्ताओं को नियमित रूप से इस पेज की समीक्षा करने की सलाह दी जाती है।
@@ -81,7 +81,7 @@ const TermsAndConditionsPage: React.FC = () => {
             <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3">6. कॉपीराइट और बौद्धिक संपदा (Copyright and Intellectual Property)</h2>
             <ul className="list-disc ml-6 text-gray-700 space-y-2 mt-3">
                 <li>
-                    वेबसाइट पर मौजूद सभी लेख, तस्वीरें, वीडियो और ग्राफिक्स Khabar24live.com के **कॉपीराइट और बौद्धिक संपदा अधिकार** के अंतर्गत हैं।
+                    वेबसाइट पर मौजूद सभी लेख, तस्वीरें, वीडियो और ग्राफिक्स Newsstate24.com के **कॉपीराइट और बौद्धिक संपदा अधिकार** के अंतर्गत हैं।
                 </li>
                 <li>
                     बिना अनुमति सामग्री का उपयोग **कानूनी कार्रवाई** का कारण बन सकता है।

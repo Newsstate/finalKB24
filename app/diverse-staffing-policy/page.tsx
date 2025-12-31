@@ -3,8 +3,8 @@ import React from 'react';
 
 // Define metadata for the specific page
 export const metadata = {
-  title: 'विविध स्टाफिंग और नीति (Diverse Staffing and Policy) - Khabar24Live',
-  description: 'खबर 24 लाइव की कार्यस्थल में विविधता, समानता और समावेशन को बढ़ावा देने की नीति।',
+  title: 'विविध स्टाफिंग और नीति (Diverse Staffing and Policy) - Newsstate24',
+  description: 'न्यूज़ स्टेट 24 की कार्यस्थल में विविधता, समानता और समावेशन को बढ़ावा देने की नीति।',
 };
 
 const DiverseStaffingPolicyPage: React.FC = () => {
@@ -13,7 +13,7 @@ const DiverseStaffingPolicyPage: React.FC = () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">विविध स्टाफिंग और नीति (Diverse Staffing and Policy)</h1>
 
             <p className="text-gray-700 mb-6">
-                Khabar24live.com मानता है कि हमारी टीम की **विविधता ही हमारी ताकत है**। हम ऐसे कार्यस्थल को बढ़ावा देते हैं जहाँ सभी कर्मचारियों को **समान अवसर, सम्मान और समर्थन** मिलता है। हमारी विविध स्टाफिंग नीति इस सिद्धांत पर आधारित है कि विविध पृष्ठभूमि, अनुभव और विचार संगठन की सफलता में योगदान देते हैं।
+            newsstate24.com मानता है कि हमारी टीम की **विविधता ही हमारी ताकत है**। हम ऐसे कार्यस्थल को बढ़ावा देते हैं जहाँ सभी कर्मचारियों को **समान अवसर, सम्मान और समर्थन** मिलता है। हमारी विविध स्टाफिंग नीति इस सिद्धांत पर आधारित है कि विविध पृष्ठभूमि, अनुभव और विचार संगठन की सफलता में योगदान देते हैं।
             </p>
 
             {/* --- 1. Our Diversity Vision --- */}
@@ -61,7 +61,7 @@ const DiverseStaffingPolicyPage: React.FC = () => {
             {/* --- 4. Our Commitment --- */}
             <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3">4. हमारी प्रतिबद्धता (Our Commitment)</h2>
             <p className="text-gray-700 font-medium">
-                Khabar24live.com यह सुनिश्चित करता है कि हमारी विविध स्टाफिंग नीति **केवल शब्दों तक सीमित न रहे**, बल्कि इसे कार्यस्थल पर हर रोज़ लागू किया जाए। हमारी यह प्रतिबद्धता संगठन के सभी स्तरों पर स्पष्ट और प्रभावी रूप से दिखाई देती है।
+            newsstate24.com यह सुनिश्चित करता है कि हमारी विविध स्टाफिंग नीति **केवल शब्दों तक सीमित न रहे**, बल्कि इसे कार्यस्थल पर हर रोज़ लागू किया जाए। हमारी यह प्रतिबद्धता संगठन के सभी स्तरों पर स्पष्ट और प्रभावी रूप से दिखाई देती है।
             </p>
 
             {/* --- 5. Contact Information --- */}

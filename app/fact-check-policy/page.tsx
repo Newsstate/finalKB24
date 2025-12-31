@@ -3,21 +3,21 @@ import Link from 'next/link';
 
 // Define metadata for the specific page
 export const metadata = {
-  title: 'फैक्ट-चेक नीति (Fact Check Policy) - Khabar24Live',
-  description: 'खबर 24 लाइव की पत्रकारिता में तथ्यों के सत्यापन, सटीकता और पारदर्शिता को सुनिश्चित करने की नीति।',
+  title: 'फैक्ट-चेक नीति (Fact Check Policy) - Newsstate24',
+  description: 'न्यूज़ स्टेट 24 की पत्रकारिता में तथ्यों के सत्यापन, सटीकता और पारदर्शिता को सुनिश्चित करने की नीति।',
 };
 
 const FactCheckPolicyPage: React.FC = () => {
     // Define the website URL for clarity
     // Note: The URL here has been updated based on the content provided by the user in this specific request.
-    const websiteUrl = 'https://www.khabar24live.com';
+    const websiteUrl = 'https://www.newsstate24.com';
 
     return (
         <div className="max-w-4xl mx-auto p-4 sm:p-6 bg-white shadow-xl rounded-xl">
             <h1 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">फैक्ट-चेक नीति (Fact Check Policy)</h1>
 
             <p className="text-gray-700 mb-6">
-                Khabar24live.com (`{websiteUrl}`) पाठकों को **सटीक, निष्पक्ष और भरोसेमंद समाचार** प्रदान करने के लिए प्रतिबद्ध है। हमारी फैक्ट-चेक नीति यह सुनिश्चित करती है कि हमारी वेबसाइट पर प्रकाशित सभी समाचार और रिपोर्ट **सत्यापित तथ्यों पर आधारित** हों।
+            newsstate24.com (`{websiteUrl}`) पाठकों को **सटीक, निष्पक्ष और भरोसेमंद समाचार** प्रदान करने के लिए प्रतिबद्ध है। हमारी फैक्ट-चेक नीति यह सुनिश्चित करती है कि हमारी वेबसाइट पर प्रकाशित सभी समाचार और रिपोर्ट **सत्यापित तथ्यों पर आधारित** हों।
             </p>
 
             {/* --- 1. Our Commitment --- */}

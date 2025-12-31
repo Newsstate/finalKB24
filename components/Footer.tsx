@@ -25,10 +25,10 @@ export function Footer() {
           {/* Column 1: Logo and About */}
           <div>
             <Link href="/" className="text-3xl font-bold text-white hover:text-red-500 transition-colors">
-              Khabar24Live
+            newsstate24
             </Link>
             <p className="mt-4 text-sm leading-relaxed">
-              देश और दुनिया की ताज़ा ख़बरें, राजनीति, मनोरंजन, खेल, धर्म और ज्योतिष की सटीक जानकारी के लिए Khabar24Live को फॉलो करें।
+              देश और दुनिया की ताज़ा ख़बरें, राजनीति, मनोरंजन, खेल, धर्म और ज्योतिष की सटीक जानकारी के लिए newsstate24 को फॉलो करें।
             </p>
             {/* Social Media Links */}
             <div className="flex space-x-4 mt-4">
@@ -95,7 +95,7 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="text-center text-sm pt-4">
-          &copy; {new Date().getFullYear()} **Khabar24Live**. All rights reserved.
+          &copy; {new Date().getFullYear()} **newsstate24**. All rights reserved.
         </div>
       </div>
     </footer>

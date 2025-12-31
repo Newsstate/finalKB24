@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const API_URL = "https://khabar24live.com/wp-json/wp/v2";
-const BASE_URL = "https://www.khabar24live.com";
+const BASE_URL = "https://www.newsstate24.com";
 
 // Categories for navigation
 const categories = [
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest, { params }: { params: { category
     const rawContent = post.content?.rendered || "";
     const transformedContent = transformContentToAmp(rawContent);
     const date = post.date || "";
-    const authorName = post._embedded?.author?.[0]?.name || "Khabar24Live Desk";
+    const authorName = post._embedded?.author?.[0]?.name || "Newsstate24 Desk";
     const featuredMedia = post._embedded?.["wp:featuredmedia"]?.[0];
     const imageUrl = featuredMedia?.source_url ? (featuredMedia.source_url.startsWith("http") ? featuredMedia.source_url : `${BASE_URL}${featuredMedia.source_url}`) : "";
     const imageAlt = featuredMedia?.alt_text || title;
@@ -164,7 +164,7 @@ export async function GET(request: NextRequest, { params }: { params: { category
 </head>
 <body>
   <div class="container">
-    <header><h2 style="margin:0;font-size:1.25rem">Khabar24Live</h2></header>
+    <header><h2 style="margin:0;font-size:1.25rem">Newsstate24</h2></header>
 
     ${navHtml}
 
@@ -182,7 +182,7 @@ export async function GET(request: NextRequest, { params }: { params: { category
 
     <footer>
       <p><a href="${canonical}">View full article</a></p>
-      <p>&copy; ${new Date().getFullYear()} Khabar24Live</p>
+      <p>&copy; ${new Date().getFullYear()} Newsstate24</p>
     </footer>
   </div>
 </body>
