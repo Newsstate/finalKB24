@@ -98,5 +98,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // Combine all sitemap entries
     return [...staticPages, ...categoryLinks, ...postLinks];
-
 }

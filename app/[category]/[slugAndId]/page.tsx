@@ -38,14 +38,12 @@ interface WPPost {
 // 🔥 HELPER FUNCTIONS 
 // ===========================================
 
-// 2. DEFINE extractSlug
 const extractSlug = (slugAndId: string) => {
   if (!slugAndId) return '';
   const parts = slugAndId.split('-');
   return parts.slice(0, -1).join('-');
 };
 
-// 3. DEFINE getPost
 async function getPost(slug: string): Promise<WPPost | null> {
   try {
     const res = await fetch(`${API_URL}/posts?_embed&slug=${slug}`, { 
@@ -62,7 +60,6 @@ async function getPost(slug: string): Promise<WPPost | null> {
   }
 }
 
-// 4. DEFINE getNewsArticleSchema
 function getNewsArticleSchema(post: WPPost, articleUrl: string, titleText: string, descriptionText: string) {
     const featuredMedia = post._embedded['wp:featuredmedia']?.[0];
     const author = post._embedded.author?.[0];
@@ -92,7 +89,7 @@ function getNewsArticleSchema(post: WPPost, articleUrl: string, titleText: strin
             "name": "Khabar24Live",
             "logo": {
                 "@type": "ImageObject",
-                "url": "https://www.newsstate24.com/wp-content/uploads/2025/09/khabar24live-300x300-1.jpg", 
+                "url": "https://www.khabar24live.com/wp-content/uploads/2025/09/khabar24live-300x300-1.jpg", 
                 "width": 600,
                 "height": 60
             }
@@ -102,7 +99,6 @@ function getNewsArticleSchema(post: WPPost, articleUrl: string, titleText: strin
     });
 }
 
-// 5. DEFINE getBreadcrumbSchema
 function getBreadcrumbSchema(categoryName: string, categorySlug: string, articleTitle: string, articleUrl: string) {
     return JSON.stringify({
         "@context": "https://schema.org",
@@ -130,9 +126,8 @@ function getBreadcrumbSchema(categoryName: string, categorySlug: string, article
     });
 }
 
-
 // =========================
-// SEO + Metadata Block
+// SEO + Metadata Block (FIXED)
 // =========================
 export async function generateMetadata({ params }: { params: { slugAndId: string, category: string } }): Promise<Metadata> {
   
@@ -151,41 +146,43 @@ export async function generateMetadata({ params }: { params: { slugAndId: string
   const title = post.title.rendered.replace(/<[^>]*>?/gm, '');
   const description = post.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...';
   
-  // Define the full AMP URL structure (assuming /amp suffix)
   const ampUrl = `${BASE_URL}${articlePath}/amp`; 
+  const canonicalUrl = `${BASE_URL}${articlePath}`; 
 
   return {
     title: title,
     description: description,
+    
+    // ✅ FIXED: Using 'alternates' to handle both Canonical and AMP links
     alternates: { 
-        canonical: `${BASE_URL}${articlePath}`,
-        // Add the AMP HTML link tag using the 'types' property
-        types: {
-            'amphtml': ampUrl,
-        }
-    },
-    openGraph: {
-      title: title,
-      description: description,
-      url: `${BASE_URL}${articlePath}`,
-      type: 'article',
-      images: [
-        {
-          url: post._embedded['wp:featuredmedia']?.[0]?.source_url || '/placeholder.jpg',
-          alt: title,
+        canonical: canonicalUrl,
+        other: {
+            amphtml: ampUrl,
         },
-      ],
-      publishedTime: post.date,
-      modifiedTime: post.modified_gmt || post.date,
+    },
+
+    openGraph: {
+        title: title,
+        description: description,
+        url: canonicalUrl,
+        type: 'article',
+        images: [
+            {
+                url: post._embedded['wp:featuredmedia']?.[0]?.source_url || '/placeholder.jpg',
+                alt: title,
+            },
+        ],
+        publishedTime: post.date,
+        modifiedTime: post.modified_gmt || post.date,
     },
     robots: {
-      index: true,
-      follow: true,
-      googleBot: {
         index: true,
         follow: true,
-        "max-image-preview": "large",
-      },
+        googleBot: {
+            index: true,
+            follow: true,
+            "max-image-preview": "large",
+        },
     },
   };
 }
@@ -203,7 +200,6 @@ export default async function PostPage({ params }: { params: { category: string;
   const content = post.content.rendered;
   const date = post.date;
   
-  // Prepare variables for component and schema
   const titleText = title.replace(/<[^>]*>?/gm, '');
   const descriptionText = post.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...';
   const articlePath = `/${params.category}/${params.slugAndId}`;
@@ -230,19 +226,17 @@ export default async function PostPage({ params }: { params: { category: string;
 
   return (
     <>
-      {/* JSON-LD Schemas */}
       <script 
         type="application/ld+json" 
         dangerouslySetInnerHTML={{ __html: newsArticleSchema }}
       />
       <script 
         type="application/ld+json" 
-        dangerouslySetInnerHTML={{ __html: breadcrumbSchema }} // ✅ FIXED TYPO HERE
+        dangerouslySetInnerHTML={{ __html: breadcrumbSchema }}
       />
       
       <article className="bg-white p-2 rounded-lg shadow-lg text-black">
         
-        {/* BREADCRUMB NAVIGATION */}
         <nav 
           className="flex text-sm text-gray-500 mb-2 overflow-x-auto whitespace-nowrap" 
           aria-label="Breadcrumb"
@@ -282,7 +276,6 @@ export default async function PostPage({ params }: { params: { category: string;
           </ol>
         </nav>
 
-        {/* Title */}
         <h1
           className="text-4xl font-extrabold mt-2 mb-4 text-gray-900"
           style={{ lineHeight: "2.9rem" }}
@@ -290,7 +283,6 @@ export default async function PostPage({ params }: { params: { category: string;
           {parse(title)}
         </h1>
 
-        {/* Author + Date */}
         <div className="flex items-center text-sm text-gray-500 mb-6 border-b pb-4">
           <Image
             src={authorAvatarUrl}
@@ -305,14 +297,12 @@ export default async function PostPage({ params }: { params: { category: string;
           </span>
         </div>
 
-        {/* Excerpt */}
         {post.excerpt.rendered && (
           <div className="text-lg font-semibold italic text-gray-700 mb-6 border-l-4 border-red-500 pl-4">
             {parse(post.excerpt.rendered)}
           </div>
         )}
 
-        {/* Featured Image */}
         <div className="relative w-full aspect-video mb-6">
           <Image
             src={imageUrl}
@@ -325,16 +315,11 @@ export default async function PostPage({ params }: { params: { category: string;
           />
         </div>
 
-        {/* Main Content using RichTextRenderer */}
         <div className="prose max-w-none text-lg leading-relaxed text-black custom-article-body">
         <RichTextRenderer 
             htmlContent={content}
-            // ✅ Set insertion point to 2 (after 2nd paragraph)
             insertAfterParagraph={2} 
-            insertionComponent={
-              // ✅ Insert the AdSense Component
-              <Ad300x250 />
-            }
+            insertionComponent={<Ad300x250 />}
           />
         </div>
       </article>
@@ -342,9 +327,6 @@ export default async function PostPage({ params }: { params: { category: string;
   );
 }
 
-// =========================
-// Static Params (optional)
-// =========================
 export async function generateStaticParams() {
   return [
     { 
@@ -353,5 +335,4 @@ export async function generateStaticParams() {
         "its-confirmed-korean-action-star-don-lee-joins-prabhas-triptii-dimri-spirit-directed-by-sandeep-reddy-vanga-53175"
     },
   ];
-
 }

@@ -196,4 +196,3 @@ export async function GET(request: NextRequest, { params }: { params: { category
     return new NextResponse("Server error", { status: 500 });
   }
 }
-

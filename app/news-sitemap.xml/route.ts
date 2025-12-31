@@ -86,5 +86,4 @@ export async function GET(request: NextRequest) {
             'Cache-Control': 'public, max-age=600, must-revalidate' // Cache for 10 minutes
         },
     });
-
 }

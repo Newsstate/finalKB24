@@ -109,5 +109,4 @@ export async function generateStaticParams() {
         console.warn('Could not generate static category paths. Pages will be generated on demand.');
         return [];
     }
-
 }
