@@ -9,7 +9,7 @@ import Image from 'next/image';
 import Script from 'next/script'; // 👈 IMPORT THE SCRIPT COMPONENT
 
 // --- CONFIGURATION CONSTANTS ---
-const API_URL = 'https://newsstate24.com/wp-json/wp/v2';
+const API_URL = 'https://khabar24live.com/wp-json/wp/v2';
 const GA_TRACKING_ID = 'G-TKW1SEK3SH'; 
 const ADSENSE_PUB_ID = 'ca-pub-6466761575770733'; 
 
@@ -23,7 +23,7 @@ export const metadata = {
   title: 'खबर 24 लाइव (khabar24live) हिंदी न्यूज़ - ताज़ा हिंदी खबरें, ब्रेकिंग न्यूज़ 24x7',
   description: 'khabar24live Hindi (खबर 24 लाइव) पर पढ़ें ताज़ा हिंदी खबरें, ब्रेकिंग न्यूज़, देश-दुनिया, राजनीति, खेल, मनोरंजन और अन्य बड़ी खबरें सबसे पहले।',
   icons: {
-    icon: 'https://www.newsstate24.com/wp-content/uploads/2025/09/cropped-Fevicon.ico-180x180.jpg',          // Standard favicon
+    icon: 'https://www.khabar24live.com/wp-content/uploads/2025/09/cropped-Fevicon.ico-180x180.jpg',          // Standard favicon
     
   },
 };
