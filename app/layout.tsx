@@ -24,7 +24,7 @@ export const metadata = {
   title: 'न्यूज़ स्टेट 24 (Newsstate24) हिंदी न्यूज़ - ताज़ा हिंदी खबरें, ब्रेकिंग न्यूज़ 24x7',
   description: 'Newsstate24 Hindi (न्यूज़ स्टेट 24) पर पढ़ें ताज़ा हिंदी खबरें, ब्रेकिंग न्यूज़, देश-दुनिया, राजनीति, खेल, मनोरंजन और अन्य बड़ी खबरें सबसे पहले।',
   icons: {
-    icon: 'https://www.khabar24live.com/wp-content/uploads/2026/01/newsstate-fav.png',          // Standard favicon
+    icon: 'https://www.khabar24live.com/wp-content/uploads/2025/09/cropped-Fevicon.ico-180x180.jpg',          // Standard favicon
     
   },
 };
